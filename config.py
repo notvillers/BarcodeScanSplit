@@ -24,3 +24,7 @@ make_dir(temp_path)
 IMG_DIR: str = "images"
 img_path: str = os.path.join(path, IMG_DIR)
 make_dir(img_path)
+
+COPY_DIR: str = "out"
+copy_path: str = os.path.join(path, COPY_DIR)
+make_dir(copy_path)
