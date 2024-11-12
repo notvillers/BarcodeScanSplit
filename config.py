@@ -25,6 +25,10 @@ IMG_DIR: str = "images"
 img_path: str = os.path.join(path, IMG_DIR)
 make_dir(img_path)
 
-COPY_DIR: str = "out"
-copy_path: str = os.path.join(path, COPY_DIR)
-make_dir(copy_path)
+OUTPUT_DIR: str = "out"
+output_path: str = os.path.join(path, OUTPUT_DIR)
+make_dir(output_path)
+
+BACKUP_DIR: str = "backup"
+backup_path: str = os.path.join(path, BACKUP_DIR)
+make_dir(backup_path)

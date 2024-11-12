@@ -35,7 +35,7 @@ class Scanner:
             barcodes = decode(image)
             if barcodes:
                 for barcode in barcodes:
-                    self.__log(f"Barcode found: {barcode.type} - {str(barcode.data)}")
+                    self.__log(f"Barcode found: {barcode.type} - {barcode.data.decode('utf-8')}")
                     self.barcodes.append(
                         Barcode(
                             barcode_type = barcode.type,

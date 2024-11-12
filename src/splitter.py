@@ -31,7 +31,8 @@ class Splitter:
                 for page_number, _ in enumerate(reader.pages):
                     writer = PyPDF2.PdfWriter()
                     writer.add_page(reader.pages[page_number])
-                    output_pdf_path = os.path.join(self.output_dir, f"{base_name}_{page_number}.pdf")
+                    name_without_ext: str = base_name.replace(".pdf", "").replace(".PDF", "")
+                    output_pdf_path = os.path.join(self.output_dir, f"{name_without_ext}_{page_number}.pdf")
                     with open(output_pdf_path, "wb") as output_pdf:
                         writer.write(output_pdf)
                     self.__log(f"Page {page_number + 1} saved to {output_pdf_path}")
