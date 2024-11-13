@@ -13,6 +13,7 @@ class Barcode:
     ) -> None:
         self.barcode_type: str = barcode_type
         self.barcode_data: str = barcode_data
+
 class Scanner:
     '''barcode scanner class'''
     def __init__(self,
