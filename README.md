@@ -12,3 +12,7 @@ Modify the directories in the [config.py](config.py) if needed.
 ```
 .\start.bat
 ```
+### Linux / Unix / MacOS
+```
+.\start.sh
+```

@@ -4,5 +4,9 @@ Set-Location $scriptPath
 
 # Activating .venv
 .\.venv\Scripts\Activate.ps1
+
 # Starting WSGI
 python start.py
+
+# Deactivating .venv
+deactivate
