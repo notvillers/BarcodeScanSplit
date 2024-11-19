@@ -62,6 +62,54 @@ class PdfManager:
                 files_in_dir.append(os.path.join(self.pdf_dir, file))
         return files_in_dir
 
+    def __create_lock_file(self, file_path: str, encoding: str = "utf-8-sig") -> None:
+        """
+            Create a lock file for the file
+
+            Args:
+                file_path (str): Path to the file
+        """
+        try:
+            with open(f"{file_path}.lock", "w", encoding = encoding) as lock_file:
+                lock_file.write("LOCKED")
+            self.__log(f"Lock file created for {file_path}")
+        except Exception as error:
+            self.__log(f"Error creating lock file for {file_path}: {error}")
+
+    def __check_lock_file(self, file_path: str) -> bool:
+        """
+            Check if the file is locked
+
+            Args:
+                file_path (str): Path to the file
+        """
+        return os.path.exists(f"{file_path}.lock")
+
+    def __check_and_create_lock_file(self, file_path: str, encoding: str = "utf-8-sig") -> bool:
+        """
+            Check if the file is locked and create a lock file if it is not
+
+            Args:
+                file_path (str): Path to the file
+        """
+        if not self.__check_lock_file(file_path):
+            self.__create_lock_file(file_path, encoding)
+            return False
+        return True
+
+    def __remove_lock_file(self, file_path: str) -> None:
+        """
+            Remove the lock file for the file
+
+            Args:
+                file_path (str): Path to the file
+        """
+        try:
+            os.remove(f"{file_path}.lock")
+            self.__log(f"Removed lock file for {file_path}")
+        except Exception as error:
+            self.__log(f"Error removing lock file for {file_path}: {error}")
+
     def __split_pdf(self, pdf_path: str) -> list[str]:
         """
             Split the PDF file into individual pages
@@ -135,6 +183,16 @@ class PdfManager:
         except Exception as error:
             self.__log(f"Error removing {file_path}: {error}")
 
+    def __remove_file_and_lock_file(self, file_path: str) -> None:
+        """
+            Remove the file and its lock file
+
+            Args:
+                file_path (str): Path to the file
+        """
+        self.__remove_file(file_path)
+        self.__remove_lock_file(file_path)
+
     def __backup_files(self) -> None:
         """
             Backup files to backup directory
@@ -156,20 +214,21 @@ class PdfManager:
         for i, pdf in enumerate(files):
             try:
                 self.__log(f"{str(i + 1)}/{str(len(files))}. Processing {pdf}")
-                split_pdf_files: list[str] = self.__split_pdf(pdf)
-                for split_pdf_file in split_pdf_files:
-                    split_image_files: list[str] = self.__convert_pdf_to_images(split_pdf_file)
-                    for split_image_file in split_image_files:
-                        barcodes: list[Barcode] = self.__check_barcode_on_image(split_image_file)
-                        self.__remove_file(split_image_file)
-                        if barcodes:
-                            new_file_name: str = barcodes[0].barcode_data
-                            new_file_path: str = os.path.join(self.output_dir, f"{new_file_name}.pdf")
-                            self.__copy_file_as(split_pdf_file, new_file_path)
-                        else:
-                            new_file_path: str = os.path.join(self.output_dir, os.path.basename(split_pdf_file))
-                            self.__copy_file_as(split_pdf_file, new_file_path)
-                        self.__remove_file(split_pdf_file)
-                self.__remove_file(pdf)
+                if not self.__check_and_create_lock_file(pdf):
+                    for split_pdf_file in self.__split_pdf(pdf):
+                        for split_image_file in self.__convert_pdf_to_images(split_pdf_file):
+                            barcodes: list[Barcode] = self.__check_barcode_on_image(split_image_file)
+                            self.__remove_file(split_image_file)
+                            self.__copy_file_as(
+                                split_pdf_file,
+                                os.path.join(
+                                    self.output_dir,
+                                    f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(split_pdf_file)
+                                )
+                            )
+                            self.__remove_file(split_pdf_file)
+                    self.__remove_file_and_lock_file(pdf)
+                else:
+                    self.__log(f"Skipping {pdf} as it is locked")
             except Exception as error:
                 self.__log(f"Error processing {pdf}: {error}")
