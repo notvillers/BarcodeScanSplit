@@ -8,7 +8,7 @@ cd $script_dir
 source .venv/bin/activate
 
 # Runs the script
-python start.py
+python -B start.py
 
 # Deactivates the venv
 deactivate
