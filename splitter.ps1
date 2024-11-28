@@ -3,10 +3,10 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 Set-Location $scriptPath
 
 # Activating .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\activate
 
 # Starting WSGI
-python run_by_config.py
+python splitter.py
 
 # Deactivating .venv
 deactivate
