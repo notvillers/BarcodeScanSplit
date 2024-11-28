@@ -36,4 +36,5 @@ Setup the [config file](config.py), then run it as you wish:
 ```
     ./splitter.sh
 ```
+
 (Notice the premade scripts can not handle arguments at the moment.)
