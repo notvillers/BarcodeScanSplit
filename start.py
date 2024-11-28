@@ -1,6 +1,5 @@
 '''start'''
 
-from villog import Logger
 from src.main import run as main_run
 
 def run() -> None:
