@@ -19,7 +19,7 @@ Setup the [config file](config.py), then run it as you wish:
 (If any of the arguments left empty the script will read its pair from [config file](config.py).)
 
 ## Running
-- Windows:
+### Windows:
 ```
     python splitter.py {arguments_if_needed}
 ```
@@ -29,7 +29,7 @@ Setup the [config file](config.py), then run it as you wish:
 ```
     .\splitter.bat
 ```
-- Unix/Linux/Mac:
+### Unix/Linux/Mac:
 ```
     python splitter.py {arguments_if_needed}
 ```
