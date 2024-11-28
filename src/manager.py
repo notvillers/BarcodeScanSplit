@@ -2,9 +2,9 @@
 
 import os
 from villog import Logger
-from splitter import Splitter
-from imager import Pdf2Img
-from barcode_scanner import Scanner, Barcode
+from src.splitter import Splitter
+from src.imager import Pdf2Img
+from src.barcode_scanner import Scanner, Barcode
 
 class PdfManagerException(Exception):
     '''Pdf manager exception class'''
