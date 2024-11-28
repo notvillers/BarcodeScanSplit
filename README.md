@@ -22,12 +22,18 @@ Setup the [config file](config.py), then run it as you wish:
 - Windows:
 ```
     python splitter.py {arguments_if_needed}
+```
+```
     powershell.exe .\splitter.ps1
+```
+```
     .\splitter.bat
 ```
 - Unix/Linux/Mac:
 ```
     python splitter.py {arguments_if_needed}
+```
+```
     ./splitter.sh
 ```
 (Notice the premade scripts can not handle arguments at the moment.)
