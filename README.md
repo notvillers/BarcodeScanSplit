@@ -6,7 +6,7 @@
 
 ## Setup
 
-### Using the config
+## Using the config file
 Setup the [config file](config.py), then run it as you wish:
 
 ### Using arguments
