@@ -1,6 +1,6 @@
 '''start'''
 
-from src.main import run as main_run
+from main import run as main_run
 
 def run() -> None:
     '''Main function'''

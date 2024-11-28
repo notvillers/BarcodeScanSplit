@@ -2,8 +2,8 @@
 
 import os
 from villog import Logger
-from src.slave import date_string
-from src.manager import PdfManager
+from slave import date_string
+from manager import PdfManager
 from config import log_path, doc_path, temp_path, img_path, output_path, backup_path
 
 def run() -> None:
