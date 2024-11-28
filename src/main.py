@@ -27,7 +27,17 @@ def run(
     backup_dir: str|None = None,
     log_dir: str|None = None
 ) -> None:
-    '''Main function'''
+    '''
+        Main function for the splitter
+    
+        Parameters:
+            pdf_dir (str|None): PDF directory
+            temp_dir (str|None): Temporary directory
+            image_dir (str|None): Image directory
+            output_dir (str|None): Output directory
+            backup_dir (str|None): Backup directory
+            log_dir (str|None): Log directory
+    '''
     PdfManager(
         pdf_dir = is_none(pdf_dir, doc_path),
         temp_dir = is_none(temp_dir, temp_path),
