@@ -6,7 +6,7 @@ Set-Location $scriptPath
 .\.venv\Scripts\Activate.ps1
 
 # Starting WSGI
-python start.py
+python run_by_config.py
 
 # Deactivating .venv
 deactivate

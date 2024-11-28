@@ -8,7 +8,7 @@ cd $script_dir
 source .venv/bin/activate
 
 # Runs the script
-python -B start.py
+python -B src/run_by_config.py
 
 # Deactivates the venv
 deactivate
