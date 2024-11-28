@@ -6,7 +6,7 @@ Set-Location $scriptPath
 .\.venv\Scripts\activate
 
 # Starting WSGI
-python splitter.py
+python -B splitter.py
 
 # Deactivating .venv
 deactivate
