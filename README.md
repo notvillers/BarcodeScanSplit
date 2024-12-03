@@ -16,6 +16,7 @@ Setup the [config file](config.py), then run it as you wish.
 - ```-l```, ```--log```: Directory to store log files.
 - ```-t```, ```--temp```: Temporary directory to store split.
 - ```-i```, ```--image```: Temporary directory to store the images.
+
 (If any of the arguments left empty the script will read its pair from [config file](config.py).)
 
 ## Running
