@@ -1,7 +1,7 @@
 '''pdf splitter'''
 
 import os
-import PyPDF2
+import pypdf
 from villog import Logger
 
 class Splitter:
@@ -27,9 +27,9 @@ class Splitter:
         base_name: str = os.path.basename(self.pdf_path)
         try:
             with open(self.pdf_path, "rb") as pdf_file:
-                reader = PyPDF2.PdfReader(pdf_file)
+                reader = pypdf.PdfReader(pdf_file)
                 for page_number, _ in enumerate(reader.pages):
-                    writer = PyPDF2.PdfWriter()
+                    writer = pypdf.PdfWriter()
                     writer.add_page(reader.pages[page_number])
                     name_without_ext: str = base_name.replace(".pdf", "").replace(".PDF", "")
                     output_pdf_path = os.path.join(self.output_dir, f"{name_without_ext}_{page_number}.pdf")
