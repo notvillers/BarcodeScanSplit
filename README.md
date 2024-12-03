@@ -17,7 +17,7 @@ Setup the [config](config.py) file, then run it as you wish.
 - ```-t```, ```--temp```: Temporary directory to store split.
 - ```-i```, ```--image```: Temporary directory to store the images.
 
-(If any of the arguments left empty the script will read its pair from [config](config.py) file.)
+(If any of the arguments left empty the script will read its pair from the default [config](config.py) file.)
 
 ## Running
 ### Windows:
