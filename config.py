@@ -2,41 +2,51 @@
 
 import os
 
-def make_dir(dir_path: str):
-    '''Create a directory if it does not exist'''
+def make_dir(dir_path: str) -> None:
+    '''
+        Create a directory if it does not exist
+
+        Parameters:
+            dir_path (str): Directory path
+    '''
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
 
 path: str = os.path.dirname(__file__)
 
+def make_dir_return_path(dir_path: str) -> str:
+    '''
+        Create a directory if it does not exist and return the path
+    
+        Parameters:
+            dir_path (str): Directory path
+    '''
+    dir_path: str = os.path.join(path, dir_path)
+    make_dir(dir_path)
+    return dir_path
+
 # Directories
 
 # Log directory
 LOG_DIR: str = "logs"
-log_path: str = os.path.join(path, LOG_DIR)
-make_dir(log_path)
+log_path: str = make_dir_return_path(LOG_DIR)
 
 # Document directory
 DOC_DIR: str = "docs"
-doc_path: str = os.path.join(path, DOC_DIR)
-make_dir(doc_path)
+doc_path: str = make_dir_return_path(DOC_DIR)
 
 # Temp directory
 TEMP_DIR: str = "temp"
-temp_path: str = os.path.join(path, TEMP_DIR)
-make_dir(temp_path)
+temp_path: str = make_dir_return_path(TEMP_DIR)
 
 # Image directory
 IMG_DIR: str = "images"
-img_path: str = os.path.join(path, IMG_DIR)
-make_dir(img_path)
+img_path: str = make_dir_return_path(IMG_DIR)
 
 # Output directory
 OUTPUT_DIR: str = "out"
-output_path: str = os.path.join(path, OUTPUT_DIR)
-make_dir(output_path)
+output_path: str = make_dir_return_path(OUTPUT_DIR)
 
 # Backup directory
 BACKUP_DIR: str = "backup"
-backup_path: str = os.path.join(path, BACKUP_DIR)
-make_dir(backup_path)
+backup_path: str = make_dir_return_path(BACKUP_DIR)
