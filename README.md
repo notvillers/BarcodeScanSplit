@@ -7,16 +7,17 @@
 ## Setup
 
 ### Using the config file
-Setup the [config file](config.py), then run it as you wish:
+Setup the [config](config.py) file, then run it as you wish.
 
 ### Using arguments
-- ```-s```, ```--source``` : Directory containing PDF files
-- ```-d```, ```--destination```: Directory to store output files
-- ```-b```, ```--backup```: Directory to store backup files
-- ```-l```, ```--log```: Directory to store log files
-- ```-t```, ```--temp```: Temporary directory to store split 
-- ```-i```, ```--image```: Temporary directory to store the images
-(If any of the arguments left empty the script will read its pair from [config file](config.py).)
+- ```-s```, ```--source``` : Directory containing PDF files.
+- ```-d```, ```--destination```: Directory to store output files.
+- ```-b```, ```--backup```: Directory to store backup files.
+- ```-l```, ```--log```: Directory to store log files.
+- ```-t```, ```--temp```: Temporary directory to store split.
+- ```-i```, ```--image```: Temporary directory to store the images.
+
+(If any of the arguments left empty the script will read its pair from the default [config](config.py) file.)
 
 ## Running
 ### Windows:
