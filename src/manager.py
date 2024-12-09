@@ -193,28 +193,31 @@ class PdfManager:
         self.__remove_file(file_path)
         self.__remove_lock_file(file_path)
 
-    def __backup_files(self) -> None:
-        """
-            Backup files to backup directory
-        """
-        if self.backup_dir:
-            if os.path.exists(self.backup_dir):
-                self.__log(f"Backing up files to {self.backup_dir}")
-                for file in self.__files_in_dir():
-                    self.__copy_file_as(file, os.path.join(self.backup_dir, os.path.basename(file)), silent = True)
-            else:
-                raise PdfManagerException(f"Backup directory {self.backup_dir} does not exist")
+    def __backup_file(self, file_path: str, backup_dir: str|None = None) -> bool:
+        '''
+            Backup a file to the backup directory
+
+            Args:
+                file_path (str): Path to the file to backup
+                backup_dir (str, optional): Directory to backup the file to
+        '''
+        backup_dir = backup_dir if backup_dir else self.backup_dir
+        if os.path.exists(backup_dir):
+            self.__copy_file_as(file_path, os.path.join(backup_dir, os.path.basename(file_path)), silent = True)
+            self.__log(f"Backed up {file_path} to {backup_dir}")
+            return True
+        return False
 
     def process(self) -> None:
         """
             Process the PDF files in the directory
         """
         files = self.__files_in_dir()
-        self.__backup_files()
         for i, pdf in enumerate(files):
             try:
                 self.__log(f"{str(i + 1)}/{str(len(files))}. Processing {pdf}")
                 if not self.__check_and_create_lock_file(pdf):
+                    self.__backup_file(pdf)
                     for split_pdf_file in self.__split_pdf(pdf):
                         for split_image_file in self.__convert_pdf_to_images(split_pdf_file):
                             barcodes: list[Barcode] = self.__check_barcode_on_image(split_image_file)
