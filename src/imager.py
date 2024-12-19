@@ -11,6 +11,14 @@ class Pdf2Img:
         output_path: str,
         logger: Logger = None
     ) -> None:
+        '''
+            Pdf2Img class
+
+            Parameters:
+                pdf_path (str): Path to the PDF file
+                output_path (str): Path to the output directory
+                logger (Logger, optional): Logger object (creates one if not provided
+        '''
         self.pdf_path: str = pdf_path
         self.output_path: str = output_path
         self.logger: Logger = logger if logger else Logger(
@@ -18,14 +26,21 @@ class Pdf2Img:
         )
         self.image_path: list[str]|str = []
 
-    def __log(self, content) -> None:
+    def __log(self,
+        content: str
+    ) -> None:
+        '''
+            Log content
+
+            Parameters:
+                content (str): Content to log
+        '''
         self.logger.log(content)
 
     def convert(self) -> str:
         '''convert to image'''
         images = convert_from_path(self.pdf_path)
-        pdf_path_name: str = os.path.basename(self.pdf_path)
-        pdf_path_name = pdf_path_name.replace(".pdf", "").replace(".PDF", "")
+        pdf_path_name: str = os.path.basename(self.pdf_path).replace(".pdf", "").replace(".PDF", "")
         for i, images in enumerate(images):
             image_path: str = os.path.join(self.output_path, f"{pdf_path_name}_{i}.png")
             images.save(image_path, "PNG")

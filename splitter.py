@@ -20,7 +20,7 @@ arg_list: list[list[any]] = [
 for arg in arg_list:
     parser.add_argument(arg[0], arg[1], type = arg[2], help = arg[3])
 
-args = parser.parse_args()
+args: argparse.Namespace = parser.parse_args()
 
 def run() -> None:
     '''Main function'''

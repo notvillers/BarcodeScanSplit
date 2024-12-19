@@ -2,7 +2,11 @@
 
 import os
 
-def make_dir(dir_path: str) -> None:
+path: str = os.path.dirname(__file__)
+
+def make_dir(
+    dir_path: str
+) -> None:
     '''
         Create a directory if it does not exist
 
@@ -12,9 +16,9 @@ def make_dir(dir_path: str) -> None:
     if not os.path.exists(dir_path):
         os.mkdir(dir_path)
 
-path: str = os.path.dirname(__file__)
-
-def make_dir_return_path(dir_path: str) -> str:
+def make_dir_return_path(
+    dir_path: str
+) -> str:
     '''
         Create a directory if it does not exist and return the path
     

@@ -62,7 +62,10 @@ class PdfManager:
                 files_in_dir.append(os.path.join(self.pdf_dir, file))
         return files_in_dir
 
-    def __create_lock_file(self, file_path: str, encoding: str = "utf-8-sig") -> None:
+    def __create_lock_file(self,
+        file_path: str,
+        encoding: str = "utf-8-sig"
+    ) -> None:
         """
             Create a lock file for the file
 
@@ -73,7 +76,7 @@ class PdfManager:
             with open(f"{file_path}.lock", "w", encoding = encoding) as lock_file:
                 lock_file.write("LOCKED")
             self.__log(f"Lock file created for {file_path}")
-        except Exception as error:
+        except Exception as error: #pylint: disable=broad-exception-caught
             self.__log(f"Error creating lock file for {file_path}: {error}")
 
     def __check_lock_file(self, file_path: str) -> bool:
@@ -85,7 +88,10 @@ class PdfManager:
         """
         return os.path.exists(f"{file_path}.lock")
 
-    def __check_and_create_lock_file(self, file_path: str, encoding: str = "utf-8-sig") -> bool:
+    def __check_and_create_lock_file(self,
+        file_path: str,
+        encoding: str = "utf-8-sig"
+    ) -> bool:
         """
             Check if the file is locked and create a lock file if it is not
 
@@ -97,7 +103,9 @@ class PdfManager:
             return False
         return True
 
-    def __remove_lock_file(self, file_path: str) -> None:
+    def __remove_lock_file(self,
+        file_path: str
+    ) -> None:
         """
             Remove the lock file for the file
 
@@ -107,10 +115,12 @@ class PdfManager:
         try:
             os.remove(f"{file_path}.lock")
             self.__log(f"Removed lock file for {file_path}")
-        except Exception as error:
+        except Exception as error: #pylint: disable=broad-exception-caught
             self.__log(f"Error removing lock file for {file_path}: {error}")
 
-    def __split_pdf(self, pdf_path: str) -> list[str]:
+    def __split_pdf(self,
+        pdf_path: str
+    ) -> list[str]:
         """
             Split the PDF file into individual pages
 
@@ -125,7 +135,9 @@ class PdfManager:
         splitter.split()
         return splitter.output_files
 
-    def __convert_pdf_to_images(self, pdf_path: str) -> list[str]:
+    def __convert_pdf_to_images(self,
+        pdf_path: str
+    ) -> list[str]:
         """
             Convert the PDF file to images
 
@@ -140,7 +152,9 @@ class PdfManager:
         pdf2img.convert()
         return pdf2img.image_path
 
-    def __check_barcode_on_image(self, image_path: str) -> list[Barcode]:
+    def __check_barcode_on_image(self,
+        image_path: str
+    ) -> list[Barcode]:
         """
             Check for barcodes on the image
 
@@ -154,7 +168,11 @@ class PdfManager:
         scanner.scan_for_barcodes()
         return scanner.barcodes
 
-    def __copy_file_as(self, file_path: str, new_file_path: str, silent: bool = False) -> None:
+    def __copy_file_as(self,
+        file_path: str,
+        new_file_path: str,
+        silent: bool = False
+    ) -> None:
         """
             Copy a file to a new location
 
@@ -168,10 +186,12 @@ class PdfManager:
                     new_file.write(file.read())
             if not silent:
                 self.__log(f"Copied {file_path} to {new_file_path}")
-        except Exception as error:
+        except Exception as error: #pylint: disable=broad-exception-caught
             self.__log(f"Error copying {file_path} to {new_file_path}: {error}")
 
-    def __remove_file(self, file_path: str) -> None:
+    def __remove_file(self,
+        file_path: str
+    ) -> None:
         """
             Remove a file
 
@@ -180,10 +200,12 @@ class PdfManager:
         """
         try:
             os.remove(file_path)
-        except Exception as error:
+        except Exception as error: #pylint: disable=broad-exception-caught
             self.__log(f"Error removing {file_path}: {error}")
 
-    def __remove_file_and_lock_file(self, file_path: str) -> None:
+    def __remove_file_and_lock_file(self,
+        file_path: str
+    ) -> None:
         """
             Remove the file and its lock file
 
@@ -193,7 +215,10 @@ class PdfManager:
         self.__remove_file(file_path)
         self.__remove_lock_file(file_path)
 
-    def __backup_file(self, file_path: str, backup_dir: str|None = None) -> bool:
+    def __backup_file(self,
+        file_path: str,
+        backup_dir: str|None = None
+    ) -> bool:
         '''
             Backup a file to the backup directory
 
@@ -203,7 +228,11 @@ class PdfManager:
         '''
         backup_dir = backup_dir if backup_dir else self.backup_dir
         if os.path.exists(backup_dir):
-            self.__copy_file_as(file_path, os.path.join(backup_dir, os.path.basename(file_path)), silent = True)
+            self.__copy_file_as(
+                file_path = file_path,
+                new_file_path = os.path.join(backup_dir, os.path.basename(file_path)),
+                silent = True
+            )
             self.__log(f"Backed up {file_path} to {backup_dir}")
             return True
         return False
@@ -233,5 +262,5 @@ class PdfManager:
                     self.__remove_file_and_lock_file(pdf)
                 else:
                     self.__log(f"Skipping {pdf} as it is locked")
-            except Exception as error:
+            except Exception as error: #pylint: disable=broad-exception-caught
                 self.__log(f"Error processing {pdf}: {error}")
