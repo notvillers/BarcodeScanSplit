@@ -24,7 +24,7 @@ class PdfManager:
         backup_dir: str = None,
         logger: Logger = None
     ) -> None:
-        """
+        '''
             PDF manager class
 
             Args:
@@ -34,7 +34,7 @@ class PdfManager:
                 output_dir (str): Directory to store output files
                 backup_dir (str, optional): Directory to store backup files
                 logger (Logger, optional): Logger object (creates one if not provided)
-        """
+        '''
         self.pdf_dir: str = pdf_dir
         self.temp_dir: str = temp_dir
         self.image_dir: str = image_dir
@@ -45,12 +45,12 @@ class PdfManager:
         )
 
     def log(self, content) -> None:
-        """
+        '''
             Logs content
 
             Args:
                 content (str): Content to log
-        """
+        '''
         self.logger.log(content)
 
     def files_in_dir(self) -> list[str]:
@@ -295,6 +295,39 @@ class PdfManager:
                 length = len(files)
             )
 
+    def wait_if_process_on_limit(self,
+        processes: list[Process],
+        max_processes: int
+    ) -> None:
+        '''
+            Wait if the number of processes is greater than max_processes
+
+            Parameters:
+                processes (list[Process]): List of processes
+                max_processes (int): Maximum number of processes
+        '''
+        wait: bool = True
+        while len(processes) >= max_processes:
+            if wait:
+                self.log("Waiting for processes to finish")
+                wait = False
+            processes = self.remove_dead_processes_from_list(processes)
+        return processes
+
+    def remove_dead_processes_from_list(self,
+        processes: list[Process]
+    ) -> list[Process]:
+        '''
+            Remove dead processes from the list
+
+            Parameters:
+                processes (list[Process]): List of processes
+        '''
+        for process in processes:
+            if not process.is_alive():
+                processes.remove(process) #pylint: disable = modified-iterating-list
+        return processes
+
     def multi_process_all(self,
         max_processes: int = 4
     ) -> None:
@@ -310,60 +343,16 @@ class PdfManager:
             # creating a process for each pdf file
             process: Process = Process(
                 target = self.process_file,
-                args = (
-                    pdf,
-                    i,
-                    len(files)
-                )
+                args = (pdf, i, len(files))
             )
             # adding the process to the list
             processes.append(process)
             # starting the process
             process.start()
             # wait if the number of processes is greater than max_processes
-            wait_if_process_on_limit(
+            self.wait_if_process_on_limit(
                 processes = processes,
-                max_processes = max_processes,
-                logger = self.logger
+                max_processes = max_processes
             )
-
         for process in processes:
             process.join()
-
-
-def wait_if_process_on_limit(
-    processes: list[Process],
-    max_processes: int,
-    logger: Logger| None = None
-) -> None:
-    '''
-        Wait if the number of processes is greater than max_processes
-
-        Parameters:
-            processes (list[Process]): List of processes
-            max_processes (int): Maximum number of processes
-    '''
-    wait: bool = True
-    while len(processes) >= max_processes:
-        if wait:
-            if logger:
-                logger.log("Waiting for processes to finish")
-            else:
-                print("Waiting for processes to finish")
-            wait = False
-        processes = remove_dead_processes(processes)
-    return processes
-
-def remove_dead_processes(
-    processes: list[Process]
-) -> list[Process]:
-    '''
-        Remove dead processes from the list
-
-        Parameters:
-            processes (list[Process]): List of processes
-    '''
-    for process in processes:
-        if not process.is_alive():
-            processes.remove(process) #pylint: disable = modified-iterating-list
-    return processes
