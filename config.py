@@ -2,7 +2,7 @@
 
 import os
 
-path: str = os.path.dirname(__file__)
+path: str = os.getcwd()
 
 def make_dir(
     dir_path: str

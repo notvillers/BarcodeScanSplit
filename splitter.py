@@ -24,7 +24,7 @@ for arg in arg_list:
 
 args: argparse.Namespace = parser.parse_args()
 
-def run() -> None:
+def main() -> None:
     '''Main function'''
     run_by_arg_run(
         pdf_dir = args.source,
@@ -39,4 +39,6 @@ def run() -> None:
 
 
 if __name__ == '__main__':
-    run()
+    main()
+
+# TODO: only create default directories if needed

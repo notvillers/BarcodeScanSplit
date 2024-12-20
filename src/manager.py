@@ -338,7 +338,10 @@ class PdfManager:
         processes: list[Process] = []
         if not isinstance(max_processes, int):
             raise PdfManagerException("max_processes should be an integer")
+        if max_processes < 1:
+            raise PdfManagerException("max_processes minimum value is 1, else it will make an infinite loop") # pylint: disable=line-too-long
         # looping pdf files
+        self.log(f"Processing {len(files)} files using {max_processes} processes")
         for i, pdf in enumerate(files):
             # creating a process for each pdf file
             process: Process = Process(
@@ -356,3 +359,4 @@ class PdfManager:
             )
         for process in processes:
             process.join()
+        self.log("All processes finished")
