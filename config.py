@@ -56,4 +56,20 @@ BACKUP_DIR: str = "backup"
 backup_path: str = make_dir_return_path(BACKUP_DIR)
 
 # Variables
-DEFAULT_MAX_PROCESSES: int = 4
+default_max_processes: int = os.cpu_count() or 1
+
+SINGLE_PROCESS_COMMANDS: list[str] = [
+    "singleproccess",
+    "single",
+    "s",
+    "sp",
+    "sync"
+]
+
+MULTI_PROCESS_COMMANDS: list[str] = [
+    "multiproccess",
+    "multi",
+    "m",
+    "mp",
+    "async"
+]

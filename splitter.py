@@ -15,8 +15,8 @@ arg_list: list[list[any]] = [
     ["-l", "--log", str, "Directory to store log files"],
     ["-t", "--temp", str, "Temporary directory to store split PDF files"],
     ["-i", "--image", str, "Temporary directory to store the images"],
-    ["-m", "--mode", str, "Mode of operation (single|multi)"],
-    ["-p", "--processes", int, "Maximum number of processes to run"]
+    ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"],
+    ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"]
 ]
 
 for arg in arg_list:

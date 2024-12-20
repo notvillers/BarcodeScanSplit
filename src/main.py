@@ -4,8 +4,9 @@ import os
 from villog import Logger
 from src.slave import date_string
 from src.manager import PdfManager
-from config import (log_path, doc_path, temp_path, img_path, output_path, backup_path,
-    DEFAULT_MAX_PROCESSES
+from config import (
+    log_path, doc_path, temp_path, img_path, output_path, backup_path, default_max_processes,
+    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS
 )
 
 def is_none(
@@ -42,6 +43,7 @@ def run(
             backup_dir (str|None): Backup directory
             log_dir (str|None): Log directory
             mode (str): Mode of operation (single|multi)
+            max_processes (int): Maximum number of processes to run 
     '''
     pdf_manager: PdfManager = PdfManager(
         pdf_dir = is_none(pdf_dir, doc_path),
@@ -56,16 +58,16 @@ def run(
             )
         )
     )
-    if mode.lower() in ["multiproccess", "multi", "m", "mp", "async"]:
+    if mode.lower() in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
         if not isinstance(max_processes, int) or max_processes < 1:
-            pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {DEFAULT_MAX_PROCESSES}") # pylint: disable=line-too-long
-            max_processes = DEFAULT_MAX_PROCESSES
+            pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes}") # pylint: disable=line-too-long
+            max_processes = default_max_processes
         pdf_manager.multi_process_all(
-            max_processes = is_none(max_processes, DEFAULT_MAX_PROCESSES)
+            max_processes = is_none(max_processes, default_max_processes)
         )
     else:
-        if mode.lower() not in ["singleproccess", "single", "s", "sync"]:
+        if mode.lower() not in SINGLE_PROCESS_COMMANDS:
             pdf_manager.log(f"Unknown mode: '{mode}', anyway...")
         if max_processes:
             pdf_manager.log(f"Max processes is not used in single-process mode, ignoring value: {max_processes}") # pylint: disable=line-too-long
