@@ -54,3 +54,6 @@ output_path: str = make_dir_return_path(OUTPUT_DIR)
 # Backup directory
 BACKUP_DIR: str = "backup"
 backup_path: str = make_dir_return_path(BACKUP_DIR)
+
+# Variables
+DEFAULT_MAX_PROCESSES: int = 4

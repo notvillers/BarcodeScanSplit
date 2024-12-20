@@ -14,7 +14,9 @@ arg_list: list[list[any]] = [
     ["-b", "--backup", str, "Directory to store backup files"],
     ["-l", "--log", str, "Directory to store log files"],
     ["-t", "--temp", str, "Temporary directory to store split PDF files"],
-    ["-i", "--image", str, "Temporary directory to store the images"]
+    ["-i", "--image", str, "Temporary directory to store the images"],
+    ["-m", "--mode", str, "Mode of operation (single|multi)"],
+    ["-p", "--processes", int, "Maximum number of processes to run"]
 ]
 
 for arg in arg_list:
@@ -30,7 +32,9 @@ def run() -> None:
         image_dir = args.image,
         output_dir = args.destination,
         backup_dir = args.backup,
-        log_dir = args.log
+        log_dir = args.log,
+        mode = args.mode,
+        max_processes = args.processes
     )
 
 
