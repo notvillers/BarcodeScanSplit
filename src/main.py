@@ -63,14 +63,14 @@ def run(
     mode = str(mode).lower()
     if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
-        if not isinstance(max_processes, int) or max_processes < 1:
+        if not isinstance(max_processes, int) or max_processes <= 1:
             pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes} (no. of CPU threads)") # pylint: disable=line-too-long
             max_processes = default_max_processes
         pdf_manager.multi_process_all(
             max_processes = is_none(max_processes, default_max_processes)
         )
     else:
-        if mode not in SINGLE_PROCESS_COMMANDS:
+        if mode not in SINGLE_PROCESS_COMMANDS and mode in MULTI_PROCESS_COMMANDS:
             pdf_manager.log(f"Unknown mode: '{mode}', anyway...")
         if max_processes:
             pdf_manager.log(f"Max processes is not used in single-process mode, ignoring value: {max_processes}") # pylint: disable=line-too-long

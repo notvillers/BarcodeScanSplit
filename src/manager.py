@@ -271,25 +271,25 @@ class PdfManager:
                 pdf (str): Path to the PDF file
         '''
         pcs: str = f"{str(i + 1)}/{str(length)}." if i and length else ""
-        try:
-            self.log(f"{pcs} Processing {pdf_file}")
-            if not self.check_and_create_lock_file(pdf_file):
-                self.backup_file(pdf_file)
-                for spit_pdf_file in self.split_pdf(pdf_file):
-                    for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
-                        barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
-                        self.remove_file(split_image_file)
-                        self.copy_file_as(
-                            spit_pdf_file,
-                            os.path.join(
-                                self.output_dir,
-                                f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file) # pylint: disable = line-too-long
-                            )
+        #try:
+        self.log(f"{pcs} Processing {pdf_file}")
+        if not self.check_and_create_lock_file(pdf_file):
+            self.backup_file(pdf_file)
+            for spit_pdf_file in self.split_pdf(pdf_file):
+                for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
+                    barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
+                    self.remove_file(split_image_file)
+                    self.copy_file_as(
+                        spit_pdf_file,
+                        os.path.join(
+                            self.output_dir,
+                            f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file) # pylint: disable = line-too-long
                         )
-                        self.remove_file(spit_pdf_file)
-                self.remove_file_and_lock_file(pdf_file)
-        except Exception as error: #pylint: disable = broad-exception-caught
-            self.log(f"Error processing {pdf_file}: {error}")
+                    )
+                    self.remove_file(spit_pdf_file)
+            self.remove_file_and_lock_file(pdf_file)
+        #except Exception as error: #pylint: disable = broad-exception-caught
+        #    self.log(f"Error processing {pdf_file}: {error}")
 
     def multi_process_file(self,
         pdf_file: str,

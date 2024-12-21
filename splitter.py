@@ -17,7 +17,7 @@ arg_list: list[list[any]] = [
     ["-t", "--temp", str, "Temporary directory to store split PDF files"],
     ["-i", "--image", str, "Temporary directory to store the images"],
     ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"],
-    ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"]
+    ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"] # pylint: disable=line-too-long
 ]
 
 for arg in arg_list:
