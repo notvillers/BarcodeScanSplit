@@ -5,8 +5,10 @@ from villog import Logger
 from src.slave import date_string
 from src.manager import PdfManager
 from config import (
-    log_path, doc_path, temp_path, img_path, output_path, backup_path, default_max_processes,
-    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS
+    LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR, 
+    default_max_processes,
+    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
+    make_dir_return_path
 )
 
 def is_none(
@@ -14,13 +16,13 @@ def is_none(
     default_value: any
 ) -> any:
     '''
-        If the main value is None, return the default value
+        If the main value is None, return the default value (and create the directory if needed)
 
         Parameters:
             main_value (any): Main value
             default_value (any): Default value
     '''
-    return main_value if main_value else default_value
+    return main_value if main_value else make_dir_return_path(default_value)
 
 def run(
     pdf_dir: str|None = None,
@@ -46,19 +48,20 @@ def run(
             max_processes (int): Maximum number of processes to run 
     '''
     pdf_manager: PdfManager = PdfManager(
-        pdf_dir = is_none(pdf_dir, doc_path),
-        temp_dir = is_none(temp_dir, temp_path),
-        image_dir = is_none(image_dir, img_path),
-        output_dir = is_none(output_dir, output_path),
-        backup_dir = is_none(backup_dir, backup_path),
+        pdf_dir = is_none(pdf_dir, DOC_DIR),
+        temp_dir = is_none(temp_dir, TEMP_DIR),
+        image_dir = is_none(image_dir, IMG_DIR),
+        output_dir = is_none(output_dir, OUTPUT_DIR),
+        backup_dir = is_none(backup_dir, BACKUP_DIR),
         logger = Logger(
             file_path = os.path.join(
-                is_none(log_dir, log_path),
+                is_none(log_dir, LOG_DIR),
                 f"{date_string()}.log"
             )
         )
     )
-    if mode.lower() in MULTI_PROCESS_COMMANDS:
+    mode = str(mode).lower()
+    if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
         if not isinstance(max_processes, int) or max_processes < 1:
             pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes}") # pylint: disable=line-too-long
@@ -67,7 +70,7 @@ def run(
             max_processes = is_none(max_processes, default_max_processes)
         )
     else:
-        if mode.lower() not in SINGLE_PROCESS_COMMANDS:
+        if mode not in SINGLE_PROCESS_COMMANDS:
             pdf_manager.log(f"Unknown mode: '{mode}', anyway...")
         if max_processes:
             pdf_manager.log(f"Max processes is not used in single-process mode, ignoring value: {max_processes}") # pylint: disable=line-too-long

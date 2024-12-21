@@ -2,7 +2,7 @@
 
 import os
 
-path: str = os.getcwd()
+cwd_path: str = os.getcwd()
 
 def make_dir(
     dir_path: str
@@ -25,7 +25,7 @@ def make_dir_return_path(
         Parameters:
             dir_path (str): Directory path
     '''
-    dir_path: str = os.path.join(path, dir_path)
+    dir_path: str = os.path.join(cwd_path, dir_path)
     make_dir(dir_path)
     return dir_path
 
@@ -33,27 +33,21 @@ def make_dir_return_path(
 
 # Log directory
 LOG_DIR: str = "logs"
-log_path: str = make_dir_return_path(LOG_DIR)
 
 # Document directory
 DOC_DIR: str = "docs"
-doc_path: str = make_dir_return_path(DOC_DIR)
 
 # Temp directory
 TEMP_DIR: str = "temp"
-temp_path: str = make_dir_return_path(TEMP_DIR)
 
 # Image directory
 IMG_DIR: str = "images"
-img_path: str = make_dir_return_path(IMG_DIR)
 
 # Output directory
 OUTPUT_DIR: str = "out"
-output_path: str = make_dir_return_path(OUTPUT_DIR)
 
 # Backup directory
 BACKUP_DIR: str = "backup"
-backup_path: str = make_dir_return_path(BACKUP_DIR)
 
 # Variables
 default_max_processes: int = os.cpu_count() or 1

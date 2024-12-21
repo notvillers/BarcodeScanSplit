@@ -1,9 +1,9 @@
 '''Pdf manager class'''
 
 import os
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support
 from villog import Logger
-from src.splitter import Splitter
+from src.pdf_splitter import PdfSplitter
 from src.imager import Pdf2Img
 from src.barcode_scanner import Scanner, Barcode
 
@@ -16,6 +16,14 @@ class PdfManager:
     '''Pdf manager class'''
     EXTENSION: str = ".pdf"
 
+    __slots__ = [
+        "pdf_dir",
+        "temp_dir",
+        "image_dir",
+        "output_dir",
+        "backup_dir",
+        "logger"
+    ]
     def __init__(self,
         pdf_dir: str,
         temp_dir: str,
@@ -35,11 +43,11 @@ class PdfManager:
                 backup_dir (str, optional): Directory to store backup files
                 logger (Logger, optional): Logger object (creates one if not provided)
         '''
-        self.pdf_dir: str = pdf_dir
-        self.temp_dir: str = temp_dir
-        self.image_dir: str = image_dir
-        self.output_dir: str = output_dir
-        self.backup_dir: str = backup_dir
+        self.pdf_dir: str = self.check_path(pdf_dir)
+        self.temp_dir: str = self.check_path(temp_dir)
+        self.image_dir: str = self.check_path(image_dir)
+        self.output_dir: str = self.check_path(output_dir)
+        self.backup_dir: str = self.check_path(backup_dir)
         self.logger: Logger = logger if logger else Logger(
             file_path = f"{os.path.dirname(__file__)}.log"
         )
@@ -52,6 +60,19 @@ class PdfManager:
                 content (str): Content to log
         '''
         self.logger.log(content)
+
+    def check_path(self,
+        dir_path: str
+    ) -> str:
+        '''
+            Check if the path exists, if not raise an exception
+
+            Args:
+                path (str): Path to check
+        '''
+        if not os.path.exists(dir_path):
+            raise PdfManagerException(f"Path does not exist: {dir_path}")
+        return dir_path
 
     def files_in_dir(self) -> list[str]:
         """
@@ -128,7 +149,7 @@ class PdfManager:
             Args:
                 pdf_path (str): Path to the PDF file
         """
-        splitter: Splitter = Splitter(
+        splitter: PdfSplitter = PdfSplitter(
             pdf_path = pdf_path,
             output_dir = self.temp_dir,
             logger = self.logger
@@ -342,6 +363,8 @@ class PdfManager:
             raise PdfManagerException("max_processes minimum value is 1, else it will make an infinite loop") # pylint: disable=line-too-long
         # looping pdf files
         self.log(f"Processing {len(files)} files using {max_processes} processes")
+        # starting the multiprocessing
+        freeze_support()
         for i, pdf in enumerate(files):
             # creating a process for each pdf file
             process: Process = Process(

@@ -4,7 +4,7 @@ import os
 from pypdf import PdfReader, PdfWriter
 from villog import Logger
 
-class Splitter:
+class PdfSplitter:
     '''Split a PDF file into individual pages'''
     def __init__(self,
         pdf_path: str,

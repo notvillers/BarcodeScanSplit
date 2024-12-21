@@ -1,6 +1,7 @@
 '''Running the splitter by argument'''
 
 import argparse
+from multiprocessing import freeze_support
 from src.main import run as run_by_arg_run
 
 parser: argparse.ArgumentParser = argparse.ArgumentParser(
@@ -39,6 +40,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    freeze_support()
     main()
-
-# TODO: only create default directories if needed
