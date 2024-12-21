@@ -30,7 +30,6 @@ def make_dir_return_path(
     return dir_path
 
 # Directories
-
 # Log directory
 LOG_DIR: str = "logs"
 

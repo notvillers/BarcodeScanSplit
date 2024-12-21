@@ -31,7 +31,7 @@ class Scanner:
         )
         self.barcodes: list[Barcode] = []
 
-    def __log(self,
+    def log(self,
         content: str
     ) -> None:
         '''
@@ -51,7 +51,7 @@ class Scanner:
                 for barcode in barcodes:
                     barcode_type: str = barcode.type
                     barcode_data: str = barcode.data.decode("utf-8")
-                    self.__log(f"Barcode found: {barcode_type} - {barcode_data}")
+                    self.log(f"Barcode found: {barcode_type} - {barcode_data}")
                     self.barcodes.append(
                         Barcode(
                             barcode_type = barcode_type,
@@ -59,9 +59,9 @@ class Scanner:
                         )
                     )
             else:
-                self.__log("No barcodes found")
+                self.log("No barcodes found")
         except Exception as error: #pylint: disable=broad-exception-caught
-            self.__log(f"Error scanning for barcodes: {error}")
+            self.log(f"Error scanning for barcodes: {error}")
         return self.barcodes
 
     def get_barcodes(self) -> list[Barcode]:

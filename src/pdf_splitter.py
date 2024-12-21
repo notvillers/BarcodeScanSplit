@@ -26,7 +26,7 @@ class PdfSplitter:
         )
         self.output_files: list[str] = []
 
-    def __log(self,
+    def log(self,
         content: str
     ) -> None:
         '''
@@ -39,7 +39,7 @@ class PdfSplitter:
 
     def split(self):
         '''Split the PDF file into individual pages'''
-        self.__log(f"Splitting {self.pdf_path}")
+        self.log(f"Splitting {self.pdf_path}")
         base_name: str = os.path.basename(self.pdf_path)
         try:
             with open(self.pdf_path, "rb") as pdf_file:
@@ -54,7 +54,7 @@ class PdfSplitter:
                     )
                     with open(output_pdf_path, "wb") as output_pdf:
                         writer.write(output_pdf)
-                    self.__log(f"Page {page_number + 1} saved to {output_pdf_path}")
+                    self.log(f"Page {page_number + 1} saved to {output_pdf_path}")
                     self.output_files.append(output_pdf_path)
         except Exception as error: #pylint: disable=broad-exception-caught
-            self.__log(f"Error splitting {base_name}: {error}")
+            self.log(f"Error splitting {base_name}: {error}")

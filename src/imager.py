@@ -2,6 +2,7 @@
 
 import os
 from pdf2image import convert_from_path
+from PIL import Image
 from villog import Logger
 
 class Pdf2Img:
@@ -26,7 +27,7 @@ class Pdf2Img:
         )
         self.image_path: list[str]|str = []
 
-    def __log(self,
+    def log(self,
         content: str
     ) -> None:
         '''
@@ -39,11 +40,11 @@ class Pdf2Img:
 
     def convert(self) -> str:
         '''convert to image'''
-        images = convert_from_path(self.pdf_path)
+        images: list[Image.Image] = convert_from_path(self.pdf_path)
         pdf_path_name: str = os.path.basename(self.pdf_path).replace(".pdf", "").replace(".PDF", "")
-        for i, images in enumerate(images):
+        for i, image in enumerate(images):
             image_path: str = os.path.join(self.output_path, f"{pdf_path_name}_{i}.png")
-            images.save(image_path, "PNG")
+            image.save(image_path, "PNG")
             self.image_path.append(image_path)
-            self.__log(f"Converted {self.pdf_path} to {image_path}")
+            self.log(f"Converted {self.pdf_path} to {image_path}")
         return self.image_path

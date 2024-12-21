@@ -16,6 +16,8 @@ Setup the [config](config.py) file, then run it as you wish.
 - ```-l```, ```--log```: Directory to store log files.
 - ```-t```, ```--temp```: Temporary directory to store split.
 - ```-i```, ```--image```: Temporary directory to store the images.
+- ```-m```, ```--mode```: Processing mode. (```single```, ```multi```)
+- ```-p```, ```--processes```: Maximum number of processes to run, by default is the number of CPU threads.
 
 (If any of the arguments left empty the script will read its pair from the default [config](config.py) file.)
 

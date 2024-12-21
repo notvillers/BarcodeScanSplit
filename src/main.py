@@ -22,7 +22,7 @@ def is_none(
             main_value (any): Main value
             default_value (any): Default value
     '''
-    return main_value if main_value else make_dir_return_path(default_value)
+    return main_value if main_value else default_value
 
 def run(
     pdf_dir: str|None = None,
@@ -48,14 +48,14 @@ def run(
             max_processes (int): Maximum number of processes to run 
     '''
     pdf_manager: PdfManager = PdfManager(
-        pdf_dir = is_none(pdf_dir, DOC_DIR),
-        temp_dir = is_none(temp_dir, TEMP_DIR),
-        image_dir = is_none(image_dir, IMG_DIR),
-        output_dir = is_none(output_dir, OUTPUT_DIR),
-        backup_dir = is_none(backup_dir, BACKUP_DIR),
+        pdf_dir = make_dir_return_path(is_none(pdf_dir, DOC_DIR)),
+        temp_dir = make_dir_return_path(is_none(temp_dir, TEMP_DIR)),
+        image_dir = make_dir_return_path(is_none(image_dir, IMG_DIR)),
+        output_dir = make_dir_return_path(is_none(output_dir, OUTPUT_DIR)),
+        backup_dir = make_dir_return_path(is_none(backup_dir, BACKUP_DIR)),
         logger = Logger(
             file_path = os.path.join(
-                is_none(log_dir, LOG_DIR),
+                make_dir_return_path(is_none(log_dir, LOG_DIR)),
                 f"{date_string()}.log"
             )
         )
@@ -64,7 +64,7 @@ def run(
     if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
         if not isinstance(max_processes, int) or max_processes < 1:
-            pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes}") # pylint: disable=line-too-long
+            pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes} (no. of CPU threads)") # pylint: disable=line-too-long
             max_processes = default_max_processes
         pdf_manager.multi_process_all(
             max_processes = is_none(max_processes, default_max_processes)
