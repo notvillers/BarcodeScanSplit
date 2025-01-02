@@ -5,27 +5,27 @@ import os
 cwd_path: str = os.getcwd()
 
 def make_dir(
-    dir_path: str
+    path: str
 ) -> None:
     '''
         Create a directory if it does not exist
 
         Parameters:
-            dir_path (str): Directory path
+            path (str): Directory path
     '''
-    if not os.path.exists(dir_path):
-        os.mkdir(dir_path)
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 def make_dir_return_path(
-    dir_path: str
+    path: str
 ) -> str:
     '''
         Create a directory if it does not exist and return the path
-    
+
         Parameters:
-            dir_path (str): Directory path
+            path (str): Directory path
     '''
-    dir_path: str = os.path.join(cwd_path, dir_path)
+    dir_path: str = os.path.join(cwd_path, path)
     make_dir(dir_path)
     return dir_path
 
