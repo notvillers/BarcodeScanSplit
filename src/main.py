@@ -4,25 +4,11 @@ import os
 from villog import Logger
 from src.slave import date_string
 from src.manager import PdfManager
-from config import (
-    LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR, 
-    default_max_processes,
-    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
-    make_dir_return_path
+from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
+                    default_max_processes,
+                    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
+                    make_dir_return_path
 )
-
-def is_none(
-    main_value: any,
-    default_value: any
-) -> any:
-    '''
-        If the main value is None, return the default value (and create the directory if needed)
-
-        Parameters:
-            main_value (any): Main value
-            default_value (any): Default value
-    '''
-    return main_value if main_value else default_value
 
 def run(
     pdf_dir: str|None = None,
@@ -47,28 +33,20 @@ def run(
             mode (str): Mode of operation (single|multi)
             max_processes (int): Maximum number of processes to run 
     '''
-    pdf_manager: PdfManager = PdfManager(
-        pdf_dir = make_dir_return_path(is_none(pdf_dir, DOC_DIR)),
-        temp_dir = make_dir_return_path(is_none(temp_dir, TEMP_DIR)),
-        image_dir = make_dir_return_path(is_none(image_dir, IMG_DIR)),
-        output_dir = make_dir_return_path(is_none(output_dir, OUTPUT_DIR)),
-        backup_dir = make_dir_return_path(is_none(backup_dir, BACKUP_DIR)),
-        logger = Logger(
-            file_path = os.path.join(
-                make_dir_return_path(is_none(log_dir, LOG_DIR)),
-                f"{date_string()}.log"
-            )
-        )
-    )
+    pdf_manager: PdfManager = PdfManager(pdf_dir = make_dir_return_path(pdf_dir or DOC_DIR),
+                                         temp_dir = make_dir_return_path(temp_dir or TEMP_DIR),
+                                         image_dir = make_dir_return_path(image_dir or IMG_DIR),
+                                         output_dir = make_dir_return_path(output_dir or OUTPUT_DIR), # pylint: disable=line-too-long
+                                         backup_dir = make_dir_return_path(backup_dir or BACKUP_DIR), # pylint: disable=line-too-long
+                                         logger = Logger(file_path = os.path.join(make_dir_return_path(log_dir or LOG_DIR), # pylint: disable=line-too-long
+                                                                                  f"{date_string()}.log"))) # pylint: disable=line-too-long
     mode = str(mode).lower()
     if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
         if not isinstance(max_processes, int) or max_processes <= 1:
             pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes} (no. of CPU threads)") # pylint: disable=line-too-long
             max_processes = default_max_processes
-        pdf_manager.multi_process_all(
-            max_processes = is_none(max_processes, default_max_processes)
-        )
+        pdf_manager.multi_process_all(max_processes = max_processes or default_max_processes)
     else:
         if mode not in SINGLE_PROCESS_COMMANDS and mode in MULTI_PROCESS_COMMANDS:
             pdf_manager.log(f"Unknown mode: '{mode}', anyway...")

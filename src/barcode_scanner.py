@@ -15,9 +15,8 @@ class Barcode:
 class Scanner:
     '''barcode scanner class'''
     def __init__(self,
-        image_path: str,
-        logger: Logger|None = None
-    ) -> None:
+                 image_path: str,
+                 logger: Logger|None = None) -> None:
         '''
             Barcode scanner class
 
@@ -26,14 +25,11 @@ class Scanner:
                 logger (Logger, optional): Logger object (creates one if not provided)
         '''
         self.image_path: str = image_path
-        self.logger: Logger = logger if logger else Logger(
-            file_path = f"{os.path.dirname(__file__)}.log"
-        )
+        self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
         self.barcodes: list[Barcode] = []
 
     def log(self,
-        content: str
-    ) -> None:
+            content: str) -> None:
         '''
             Log content
 
@@ -53,11 +49,8 @@ class Scanner:
                     barcode_data: str = barcode.data.decode("utf-8")
                     self.log(f"Barcode found: {barcode_type} - {barcode_data}")
                     self.barcodes.append(
-                        Barcode(
-                            barcode_type = barcode_type,
-                            barcode_data = barcode_data,
-                        )
-                    )
+                        Barcode(barcode_type = barcode_type,
+                                barcode_data = barcode_data))
             else:
                 self.log("No barcodes found")
         except Exception as error: #pylint: disable=broad-exception-caught

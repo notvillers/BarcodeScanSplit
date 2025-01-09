@@ -4,9 +4,7 @@ import os
 
 cwd_path: str = os.getcwd()
 
-def make_dir(
-    path: str
-) -> None:
+def make_dir(path: str) -> None:
     '''
         Create a directory if it does not exist
 
@@ -16,16 +14,15 @@ def make_dir(
     if not os.path.exists(path):
         os.mkdir(path)
 
-def make_dir_return_path(
-    path: str
-) -> str:
+def make_dir_return_path(path: str) -> str:
     '''
         Create a directory if it does not exist and return the path
 
         Parameters:
             path (str): Directory path
     '''
-    dir_path: str = os.path.join(cwd_path, path)
+    dir_path: str = os.path.join(cwd_path,
+                                 path)
     make_dir(dir_path)
     return dir_path
 
@@ -51,18 +48,14 @@ BACKUP_DIR: str = "backup"
 # Variables
 default_max_processes: int = os.cpu_count() or 1
 
-SINGLE_PROCESS_COMMANDS: list[str] = [
-    "singleproccess",
-    "single",
-    "s",
-    "sp",
-    "sync"
-]
+SINGLE_PROCESS_COMMANDS: list[str] = ["singleproccess",
+                                      "single",
+                                      "s",
+                                      "sp",
+                                      "sync"]
 
-MULTI_PROCESS_COMMANDS: list[str] = [
-    "multiproccess",
-    "multi",
-    "m",
-    "mp",
-    "async"
-]
+MULTI_PROCESS_COMMANDS: list[str] = ["multiproccess",
+                                     "multi",
+                                     "m",
+                                     "mp",
+                                     "async"]

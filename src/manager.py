@@ -9,29 +9,27 @@ from src.barcode_scanner import Scanner, Barcode
 
 class PdfManagerException(Exception):
     '''Pdf manager exception class'''
-    def __init__(self, message):
+    def __init__(self,
+                 message: str):
         super().__init__(message)
 
 class PdfManager:
     '''Pdf manager class'''
     EXTENSION: str = ".pdf"
 
-    __slots__ = [
-        "pdf_dir",
-        "temp_dir",
-        "image_dir",
-        "output_dir",
-        "backup_dir",
-        "logger"
-    ]
+    __slots__ = ["pdf_dir",
+                 "temp_dir",
+                 "image_dir",
+                 "output_dir",
+                 "backup_dir",
+                 "logger"]
     def __init__(self,
-        pdf_dir: str,
-        temp_dir: str,
-        image_dir: str,
-        output_dir: str,
-        backup_dir: str = None,
-        logger: Logger = None
-    ) -> None:
+                 pdf_dir: str,
+                 temp_dir: str,
+                 image_dir: str,
+                 output_dir: str,
+                 backup_dir: str = None,
+                 logger: Logger = None) -> None:
         '''
             PDF manager class
 
@@ -48,11 +46,10 @@ class PdfManager:
         self.image_dir: str = self.check_path(image_dir)
         self.output_dir: str = self.check_path(output_dir)
         self.backup_dir: str = self.check_path(backup_dir)
-        self.logger: Logger = logger if logger else Logger(
-            file_path = f"{os.path.dirname(__file__)}.log"
-        )
+        self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
 
-    def log(self, content) -> None:
+    def log(self,
+            content: str) -> None:
         '''
             Logs content
 
@@ -62,8 +59,7 @@ class PdfManager:
         self.logger.log(content)
 
     def check_path(self,
-        dir_path: str
-    ) -> str:
+                   dir_path: str) -> str:
         '''
             Check if the path exists, if not raise an exception
 
@@ -81,13 +77,13 @@ class PdfManager:
         files_in_dir: list[str] = []
         for file in os.listdir(self.pdf_dir):
             if file.lower().endswith(self.EXTENSION):
-                files_in_dir.append(os.path.join(self.pdf_dir, file))
+                files_in_dir.append(os.path.join(self.pdf_dir,
+                                                 file))
         return files_in_dir
 
     def create_lock_file(self,
-        file_path: str,
-        encoding: str = "utf-8-sig"
-    ) -> None:
+                         file_path: str,
+                         encoding: str = "utf-8-sig") -> None:
         """
             Create a lock file for the file
 
@@ -95,13 +91,16 @@ class PdfManager:
                 file_path (str): Path to the file
         """
         try:
-            with open(f"{file_path}.lock", "w", encoding = encoding) as lock_file:
+            with open(f"{file_path}.lock",
+                      "w",
+                      encoding = encoding) as lock_file:
                 lock_file.write("LOCKED")
             self.log(f"Lock file created for {file_path}")
         except Exception as error: #pylint: disable=broad-exception-caught
             self.log(f"Error creating lock file for {file_path}: {error}")
 
-    def check_lock_file(self, file_path: str) -> bool:
+    def check_lock_file(self,
+                        file_path: str) -> bool:
         """
             Check if the file is locked
 
@@ -111,9 +110,8 @@ class PdfManager:
         return os.path.exists(f"{file_path}.lock")
 
     def check_and_create_lock_file(self,
-        file_path: str,
-        encoding: str = "utf-8-sig"
-    ) -> bool:
+                                   file_path: str,
+                                   encoding: str = "utf-8-sig") -> bool:
         """
             Check if the file is locked and create a lock file if it is not
 
@@ -121,13 +119,13 @@ class PdfManager:
                 file_path (str): Path to the file
         """
         if not self.check_lock_file(file_path):
-            self.create_lock_file(file_path, encoding)
+            self.create_lock_file(file_path,
+                                  encoding)
             return False
         return True
 
     def remove_lock_file(self,
-        file_path: str
-    ) -> None:
+                         file_path: str) -> None:
         """
             Remove the lock file for the file
 
@@ -141,18 +139,16 @@ class PdfManager:
             self.log(f"Error removing lock file for {file_path}: {error}")
 
     def split_pdf(self,
-        pdf_path: str
-    ) -> list[str]:
+                  pdf_path: str) -> list[str]:
         """
             Split the PDF file into individual pages
 
             Args:
                 pdf_path (str): Path to the PDF file
         """
-        splitter: PdfSplitter = PdfSplitter(
-            pdf_path = pdf_path,
-            output_dir = self.temp_dir,
-            logger = self.logger
+        splitter: PdfSplitter = PdfSplitter(pdf_path = pdf_path,
+                                            output_dir = self.temp_dir,
+                                            logger = self.logger
         )
         splitter.split()
         return splitter.output_files
