@@ -1,4 +1,6 @@
-'''pdf splitter'''
+'''
+    Pdf splitter module
+'''
 
 import os
 from pypdf import PdfReader, PdfWriter
@@ -7,10 +9,9 @@ from villog import Logger
 class PdfSplitter:
     '''Split a PDF file into individual pages'''
     def __init__(self,
-        pdf_path: str,
-        output_dir: str,
-        logger: Logger = None
-    ) -> None:
+                 pdf_path: str,
+                 output_dir: str,
+                 logger: Logger = None) -> None:
         '''
             Splitter class
 
@@ -21,14 +22,12 @@ class PdfSplitter:
         '''
         self.pdf_path: str = pdf_path
         self.output_dir: str = output_dir
-        self.logger: Logger = logger if logger else Logger(
-            file_path = os.path.dirname(__file__)
-        )
+        self.logger: Logger = logger or Logger(file_path = os.path.join(os.path.dirname(__file__),
+                                                                        "log.log"))
         self.output_files: list[str] = []
 
     def log(self,
-        content: str
-    ) -> None:
+            content: str) -> None:
         '''
             Log content
 
@@ -48,11 +47,10 @@ class PdfSplitter:
                     writer = PdfWriter()
                     writer.add_page(reader.pages[page_number])
                     name_without_ext: str = base_name.replace(".pdf", "").replace(".PDF", "")
-                    output_pdf_path = os.path.join(
-                        self.output_dir, 
-                        f"{name_without_ext}_{page_number}.pdf"
-                    )
-                    with open(output_pdf_path, "wb") as output_pdf:
+                    output_pdf_path = os.path.join(self.output_dir,
+                                                   f"{name_without_ext}_{page_number}.pdf")
+                    with open(output_pdf_path,
+                              "wb") as output_pdf:
                         writer.write(output_pdf)
                     self.log(f"Page {page_number + 1} saved to {output_pdf_path}")
                     self.output_files.append(output_pdf_path)
