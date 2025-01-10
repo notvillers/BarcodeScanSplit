@@ -1,4 +1,6 @@
-'''Pdf manager class'''
+'''
+    Pdf manager module
+'''
 
 import os
 from multiprocessing import Process, freeze_support
@@ -8,13 +10,17 @@ from src.imager import Pdf2Img
 from src.barcode_scanner import Scanner, Barcode
 
 class PdfManagerException(Exception):
-    '''Pdf manager exception class'''
+    '''
+        Pdf manager exception class
+    '''
     def __init__(self,
                  message: str):
         super().__init__(message)
 
 class PdfManager:
-    '''Pdf manager class'''
+    '''
+        Pdf manager class
+    '''
     EXTENSION: str = ".pdf"
 
     __slots__ = ["pdf_dir",
@@ -148,49 +154,41 @@ class PdfManager:
         """
         splitter: PdfSplitter = PdfSplitter(pdf_path = pdf_path,
                                             output_dir = self.temp_dir,
-                                            logger = self.logger
-        )
+                                            logger = self.logger)
         splitter.split()
         return splitter.output_files
 
     def convert_pdf_to_images(self,
-        pdf_path: str
-    ) -> list[str]:
+                              pdf_path: str) -> list[str]:
         """
             Convert the PDF file to images
 
             Args:
                 pdf_path (str): Path to the PDF file
         """
-        pdf2img: Pdf2Img = Pdf2Img(
-            pdf_path = pdf_path,
-            output_path = self.image_dir,
-            logger = self.logger
-        )
+        pdf2img: Pdf2Img = Pdf2Img(pdf_path = pdf_path,
+                                   output_path = self.image_dir,
+                                   logger = self.logger)
         pdf2img.convert()
         return pdf2img.image_path
 
     def check_barcode_on_image(self,
-        image_path: str
-    ) -> list[Barcode]:
+                               image_path: str) -> list[Barcode]:
         """
             Check for barcodes on the image
 
             Args:
                 image_path (str): Path to the image file
         """
-        scanner: Scanner = Scanner(
-            image_path = image_path,
-            logger = self.logger
-        )
+        scanner: Scanner = Scanner(image_path = image_path,
+                                   logger = self.logger)
         scanner.scan_for_barcodes()
         return scanner.barcodes
 
     def copy_file_as(self,
-        file_path: str,
-        new_file_path: str,
-        silent: bool = False
-    ) -> None:
+                     file_path: str,
+                     new_file_path: str,
+                     silent: bool = False) -> None:
         """
             Copy a file to a new location
 
@@ -199,8 +197,10 @@ class PdfManager:
                 new_file_path (str): Path to the new file
         """
         try:
-            with open(file_path, "rb") as file:
-                with open(new_file_path, "wb") as new_file:
+            with open(file_path,
+                      "rb") as file:
+                with open(new_file_path,
+                          "wb") as new_file:
                     new_file.write(file.read())
             if not silent:
                 self.log(f"Copied {file_path} to {new_file_path}")
@@ -208,8 +208,7 @@ class PdfManager:
             self.log(f"Error copying {file_path} to {new_file_path}: {error}")
 
     def remove_file(self,
-        file_path: str
-    ) -> None:
+                    file_path: str) -> None:
         """
             Remove a file
 
@@ -222,8 +221,7 @@ class PdfManager:
             self.log(f"Error removing {file_path}: {error}")
 
     def remove_file_and_lock_file(self,
-        file_path: str
-    ) -> None:
+                                  file_path: str) -> None:
         """
             Remove the file and its lock file
 
@@ -234,9 +232,8 @@ class PdfManager:
         self.remove_lock_file(file_path)
 
     def backup_file(self,
-        file_path: str,
-        backup_dir: str|None = None
-    ) -> bool:
+                    file_path: str,
+                    backup_dir: str|None = None) -> bool:
         '''
             Backup a file to the backup directory
 
@@ -244,22 +241,20 @@ class PdfManager:
                 file_path (str): Path to the file to backup
                 backup_dir (str, optional): Directory to backup the file to
         '''
-        backup_dir = backup_dir if backup_dir else self.backup_dir
+        backup_dir = backup_dir or self.backup_dir
         if os.path.exists(backup_dir):
-            self.copy_file_as(
-                file_path = file_path,
-                new_file_path = os.path.join(backup_dir, os.path.basename(file_path)),
-                silent = True
-            )
+            self.copy_file_as(file_path = file_path,
+                              new_file_path = os.path.join(backup_dir,
+                                                           os.path.basename(file_path)),
+                              silent = True)
             self.log(f"Backed up {file_path} to {backup_dir}")
             return True
         return False
 
     def process_file(self,
-        pdf_file: str,
-        i: int|None = None,
-        length: int|None = None
-    ) -> None:
+                     pdf_file: str,
+                     i: int|None = None,
+                     length: int|None = None) -> None:
         '''
             Process a single PDF file
 
@@ -267,38 +262,34 @@ class PdfManager:
                 pdf (str): Path to the PDF file
         '''
         pcs: str = f"{str(i + 1)}/{str(length)}." if i and length else ""
-        #try:
-        self.log(f"{pcs} Processing {pdf_file}")
-        if not self.check_and_create_lock_file(pdf_file):
-            self.backup_file(pdf_file)
-            for spit_pdf_file in self.split_pdf(pdf_file):
-                for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
-                    barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
-                    self.remove_file(split_image_file)
-                    self.copy_file_as(
-                        spit_pdf_file,
-                        os.path.join(
-                            self.output_dir,
-                            f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file) # pylint: disable = line-too-long
-                        )
-                    )
-                    self.remove_file(spit_pdf_file)
-            self.remove_file_and_lock_file(pdf_file)
-        #except Exception as error: #pylint: disable = broad-exception-caught
-        #    self.log(f"Error processing {pdf_file}: {error}")
+        try:
+            self.log(f"{pcs} Processing {pdf_file}")
+            if not self.check_and_create_lock_file(pdf_file):
+                self.backup_file(pdf_file)
+                for spit_pdf_file in self.split_pdf(pdf_file):
+                    for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
+                        barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
+                        self.remove_file(split_image_file)
+                        self.copy_file_as(spit_pdf_file,
+                                        os.path.join(self.output_dir,
+                                                    f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file))) # pylint: disable = line-too-long
+                        self.remove_file(spit_pdf_file)
+                self.remove_file_and_lock_file(pdf_file)
+        except Exception as error: #pylint: disable = broad-exception-caught
+            self.log(f"Error processing {pdf_file}: {error}")
 
     def multi_process_file(self,
-        pdf_file: str,
-        i: int|None = None,
-        length: int|None = None
-    ) -> None:
+                           pdf_file: str,
+                           i: int|None = None,
+                           length: int|None = None) -> None:
         '''
             Process a single PDF file using multiprocessing
 
             Args:
                 pdf (str): Path to the PDF file
         '''
-        Process(target=self.process_file, args=(pdf_file, i, length)).start()
+        Process(target = self.process_file,
+                args = (pdf_file, i, length)).start()
 
     def process_all(self) -> None:
         """
@@ -306,16 +297,13 @@ class PdfManager:
         """
         files: list[str] = self.files_in_dir()
         for i, pdf in enumerate(files):
-            self.process_file(
-                pdf_file = pdf,
-                i = i,
-                length = len(files)
-            )
+            self.process_file(pdf_file = pdf,
+                              i = i,
+                              length = len(files))
 
     def wait_if_process_on_limit(self,
-        processes: list[Process],
-        max_processes: int
-    ) -> None:
+                                 processes: list[Process],
+                                 max_processes: int) -> None:
         '''
             Wait if the number of processes is greater than max_processes
 
@@ -332,8 +320,7 @@ class PdfManager:
         return processes
 
     def remove_dead_processes_from_list(self,
-        processes: list[Process]
-    ) -> list[Process]:
+                                        processes: list[Process]) -> list[Process]:
         '''
             Remove dead processes from the list
 
@@ -346,8 +333,7 @@ class PdfManager:
         return processes
 
     def multi_process_all(self,
-        max_processes: int = 4
-    ) -> None:
+                          max_processes: int = 4) -> None:
         '''
             Process the PDF files in the directory using multiprocessing
         '''
@@ -363,19 +349,15 @@ class PdfManager:
         freeze_support()
         for i, pdf in enumerate(files):
             # creating a process for each pdf file
-            process: Process = Process(
-                target = self.process_file,
-                args = (pdf, i, len(files))
-            )
+            process: Process = Process(target = self.process_file,
+                                       args = (pdf, i, len(files)))
             # adding the process to the list
             processes.append(process)
             # starting the process
             process.start()
             # wait if the number of processes is greater than max_processes
-            self.wait_if_process_on_limit(
-                processes = processes,
-                max_processes = max_processes
-            )
+            self.wait_if_process_on_limit(processes = processes,
+                                          max_processes = max_processes)
         for process in processes:
             process.join()
         self.log("All processes finished")
