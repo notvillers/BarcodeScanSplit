@@ -1,5 +1,7 @@
 # BarcodeScanSplit
 
+Reads pdf files from directory, split the pages and renames them by the barcode found on each page.
+
 ## Extra requirements
 - [Zbar](https://github.com/NaturalHistoryMuseum/pyzbar)
 - [Poppler](https://poppler.freedesktop.org/) or [Poppler for Windows](https://github.com/oschwartz10612/poppler-windows)
@@ -23,8 +25,9 @@ Setup the [config](config.py) file, then run it as you wish.
 
 ## Running
 ### Windows:
+Example usage:
 ```
-    python splitter.py {arguments_if_needed}
+    python splitter.py -s docs -d out -m multi -p 4
 ```
 ```
     powershell.exe .\splitter.ps1
@@ -33,11 +36,11 @@ Setup the [config](config.py) file, then run it as you wish.
     .\splitter.bat
 ```
 ### Unix/Linux/Mac:
+Example usage:
 ```
-    python splitter.py {arguments_if_needed}
+    python3 splitter.py -s docs -d out -m multi -p 4
 ```
 ```
-    ./splitter.sh
+    ./barcodescansplit.sh -s docs -d out -m multi -p 4
+    
 ```
-
-(Notice the premade scripts can not handle arguments at the moment.)
