@@ -6,10 +6,7 @@ Reads pdf files from directory, split the pages and renames them by the barcode 
 - [Zbar](https://github.com/NaturalHistoryMuseum/pyzbar)
 - [Poppler](https://poppler.freedesktop.org/) or [Poppler for Windows](https://github.com/oschwartz10612/poppler-windows)
 
-## Setup
-
-### Using the config file
-Setup the [config](config.py) file, then run it as you wish.
+## Arguments
 
 ### Using arguments
 - ```-s```, ```--source``` : Directory containing PDF files.

@@ -10,16 +10,14 @@ from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
                     make_dir_return_path
 )
 
-def run(
-    pdf_dir: str|None = None,
-    temp_dir: str|None = None,
-    image_dir: str|None = None,
-    output_dir: str|None = None,
-    backup_dir: str|None = None,
-    log_dir: str|None = None,
-    mode: str = "single",
-    max_processes: int = 4
-) -> None:
+def run(pdf_dir: str|None = None,
+        temp_dir: str|None = None,
+        image_dir: str|None = None,
+        output_dir: str|None = None,
+        backup_dir: str|None = None,
+        log_dir: str|None = None,
+        mode: str = "single",
+        max_processes: int = 4) -> None:
     '''
         Main function for the splitter
     

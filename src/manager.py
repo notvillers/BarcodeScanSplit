@@ -34,8 +34,8 @@ class PdfManager:
                  temp_dir: str,
                  image_dir: str,
                  output_dir: str,
-                 backup_dir: str = None,
-                 logger: Logger = None) -> None:
+                 backup_dir: str | None = None,
+                 logger: Logger | None = None) -> None:
         '''
             PDF manager class
 
@@ -51,7 +51,7 @@ class PdfManager:
         self.temp_dir: str = self.check_path(temp_dir)
         self.image_dir: str = self.check_path(image_dir)
         self.output_dir: str = self.check_path(output_dir)
-        self.backup_dir: str = self.check_path(backup_dir)
+        self.backup_dir: str | None = self.check_path(backup_dir) if backup_dir else None
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
 
     def log(self,
@@ -242,13 +242,14 @@ class PdfManager:
                 backup_dir (str, optional): Directory to backup the file to
         '''
         backup_dir = backup_dir or self.backup_dir
-        if os.path.exists(backup_dir):
-            self.copy_file_as(file_path = file_path,
-                              new_file_path = os.path.join(backup_dir,
-                                                           os.path.basename(file_path)),
-                              silent = True)
-            self.log(f"Backed up {file_path} to {backup_dir}")
-            return True
+        if backup_dir:
+            if os.path.exists(backup_dir):
+                self.copy_file_as(file_path = file_path,
+                                new_file_path = os.path.join(backup_dir,
+                                                            os.path.basename(file_path)),
+                                silent = True)
+                self.log(f"Backed up {file_path} to {backup_dir}")
+                return True
         return False
 
     def process_file(self,
@@ -280,8 +281,8 @@ class PdfManager:
 
     def multi_process_file(self,
                            pdf_file: str,
-                           i: int|None = None,
-                           length: int|None = None) -> None:
+                           i: int | None = None,
+                           length: int | None = None) -> None:
         '''
             Process a single PDF file using multiprocessing
 
@@ -340,9 +341,9 @@ class PdfManager:
         files: list[str] = self.files_in_dir()
         processes: list[Process] = []
         if not isinstance(max_processes, int):
-            raise PdfManagerException("max_processes should be an integer")
+            raise PdfManagerException("'max_processes' should be an integer")
         if max_processes < 1:
-            raise PdfManagerException("max_processes minimum value is 1, else it will make an infinite loop") # pylint: disable=line-too-long
+            raise PdfManagerException("'max_processes' minimum value is 1, else it will make an infinite loop") # pylint: disable=line-too-long
         # looping pdf files
         self.log(f"Processing {len(files)} files using {max_processes} processes")
         # starting the multiprocessing
