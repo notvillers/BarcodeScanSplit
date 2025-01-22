@@ -32,6 +32,9 @@ Example usage:
 ```
     .\splitter.bat
 ```
+
+([splitter.bat](splitter.bat) can't get arguments at the moment.)
+
 ### Unix/Linux/Mac:
 Example usage:
 ```
