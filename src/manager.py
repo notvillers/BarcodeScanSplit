@@ -233,7 +233,7 @@ class PdfManager:
 
     def backup_file(self,
                     file_path: str,
-                    backup_dir: str|None = None) -> bool:
+                    backup_dir: str | None = None) -> bool:
         '''
             Backup a file to the backup directory
 
@@ -254,8 +254,8 @@ class PdfManager:
 
     def process_file(self,
                      pdf_file: str,
-                     i: int|None = None,
-                     length: int|None = None) -> None:
+                     i: int | None = None,
+                     length: int | None = None) -> None:
         '''
             Process a single PDF file
 
