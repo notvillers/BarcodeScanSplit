@@ -325,7 +325,7 @@ class PdfManager:
         '''
             Remove dead processes from the list
 
-            Parameters:
+            Args:
                 processes (list[Process]): List of processes
         '''
         for process in processes:

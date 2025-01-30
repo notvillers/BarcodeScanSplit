@@ -20,7 +20,7 @@ class Scanner:
         '''
             Barcode scanner class
 
-            Parameters:
+            Args:
                 image_path (str): Path to the image
                 logger (Logger, optional): Logger object (creates one if not provided)
         '''
@@ -33,7 +33,7 @@ class Scanner:
         '''
             Log content
 
-            Parameters:
+            Args:
                 content (str): Content to log
         '''
         self.logger.log(content)

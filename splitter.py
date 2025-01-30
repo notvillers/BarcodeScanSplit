@@ -27,7 +27,9 @@ for arg in arg_list:
 args: argparse.Namespace = parser.parse_args()
 
 def main() -> None:
-    '''Main function'''
+    '''
+        Main function
+    '''
     run_by_arg_run(pdf_dir = args.source,
                    temp_dir = args.temp,
                    image_dir = args.image,

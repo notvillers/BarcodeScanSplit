@@ -15,7 +15,7 @@ class PdfSplitter:
         '''
             Splitter class
 
-            Parameters:
+            Args:
                 pdf_path (str): Path to the PDF file
                 output_dir (str): Path to the output directory
                 logger (Logger, optional): Logger object (creates one if not provided
@@ -31,7 +31,7 @@ class PdfSplitter:
         '''
             Log content
 
-            Parameters:
+            Args:
                 content (str): Content to log
         '''
         self.logger.log(content)

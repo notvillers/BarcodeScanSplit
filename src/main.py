@@ -20,7 +20,7 @@ def run(pdf_dir: str|None = None,
     '''
         Main function for the splitter
     
-        Parameters:
+        Args:
             pdf_dir (str|None): PDF directory
             temp_dir (str|None): Temporary directory
             image_dir (str|None): Image directory
