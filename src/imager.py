@@ -6,7 +6,13 @@ from PIL import Image
 from villog import Logger
 
 class Pdf2Img:
-    '''Pdf2Img class'''
+    '''
+        Pdf2Img class
+    '''
+    __slots__: list[str] = ["pdf_path",
+                            "output_path",
+                            "logger",
+                            "image_path"]
     def __init__(self,
                  pdf_path: str,
                  output_path: str,
@@ -35,7 +41,9 @@ class Pdf2Img:
         self.logger.log(content)
 
     def convert(self) -> str:
-        '''convert to image'''
+        '''
+            Convert to image
+        '''
         images: list[Image.Image] = convert_from_path(self.pdf_path)
         pdf_path_name: str = os.path.basename(self.pdf_path).replace(".pdf", "").replace(".PDF", "")
         for i, image in enumerate(images):

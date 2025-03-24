@@ -7,7 +7,13 @@ from pypdf import PdfReader, PdfWriter
 from villog import Logger
 
 class PdfSplitter:
-    '''Split a PDF file into individual pages'''
+    '''
+        Split a PDF file into individual pages
+    '''
+    __slots__: list[str] = ["pdf_path",
+                            "output_dir",
+                            "logger",
+                            "output_files"]
     def __init__(self,
                  pdf_path: str,
                  output_dir: str,
@@ -26,6 +32,7 @@ class PdfSplitter:
                                                                         "log.log"))
         self.output_files: list[str] = []
 
+
     def log(self,
             content: str) -> None:
         '''
@@ -36,8 +43,11 @@ class PdfSplitter:
         '''
         self.logger.log(content)
 
+
     def split(self):
-        '''Split the PDF file into individual pages'''
+        '''
+            Split the PDF file into individual pages
+        '''
         self.log(f"Splitting {self.pdf_path}")
         base_name: str = os.path.basename(self.pdf_path)
         try:

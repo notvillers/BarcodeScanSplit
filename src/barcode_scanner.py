@@ -2,21 +2,26 @@
 
 import os
 from dataclasses import dataclass
-from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import decode as pyz_decode
 from PIL import Image
 from villog import Logger
 
-@dataclass
+@dataclass(slots = True)
 class Barcode:
-    '''barcode class'''
+    ''' 
+        Barcode class
+    '''
     barcode_type: str
     barcode_data: str
 
+
 class Scanner:
-    '''barcode scanner class'''
+    '''
+        Barcode scanner class
+    '''
     def __init__(self,
                  image_path: str,
-                 logger: Logger|None = None) -> None:
+                 logger: Logger | None = None) -> None:
         '''
             Barcode scanner class
 
@@ -39,10 +44,12 @@ class Scanner:
         self.logger.log(content)
 
     def scan_for_barcodes(self) -> list[Barcode]:
-        '''scan for barcodes'''
+        '''
+            Scan for barcodes
+        '''
         try:
             image = Image.open(self.image_path)
-            barcodes: list = decode(image)
+            barcodes: list = pyz_decode(image)
             if barcodes:
                 for barcode in barcodes:
                     barcode_type: str = barcode.type
@@ -58,5 +65,7 @@ class Scanner:
         return self.barcodes
 
     def get_barcodes(self) -> list[Barcode]:
-        '''return barcodes'''
+        '''
+            Return barcodes
+        '''
         return self.barcodes
