@@ -20,7 +20,7 @@ class Pdf2Img:
         '''
             Pdf2Img class
 
-            Parameters:
+            Args:
                 pdf_path (str): Path to the PDF file
                 output_path (str): Path to the output directory
                 logger (Logger, optional): Logger object (creates one if not provided
@@ -28,14 +28,14 @@ class Pdf2Img:
         self.pdf_path: str = pdf_path
         self.output_path: str = output_path
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
-        self.image_path: list[str]|str = []
+        self.image_path: list[str] | str = []
 
     def log(self,
             content: str) -> None:
         '''
             Log content
 
-            Parameters:
+            Args:
                 content (str): Content to log
         '''
         self.logger.log(content)
