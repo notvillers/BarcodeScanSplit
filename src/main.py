@@ -9,6 +9,7 @@ from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
                     SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
                     make_dir_return_path)
 
+
 def run(pdf_dir: str|None = None,
         temp_dir: str|None = None,
         image_dir: str|None = None,
@@ -38,11 +39,11 @@ def run(pdf_dir: str|None = None,
                                          logger = Logger(file_path = os.path.join(make_dir_return_path(log_dir or LOG_DIR), # pylint: disable=line-too-long
                                                                                   f"{date_string()}.log"))) # pylint: disable=line-too-long
     mode = str(mode).lower()
-    if mode.lower() in MULTI_PROCESS_COMMANDS:
+    if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")
         if not isinstance(max_processes, int) or max_processes <= 1:
             pdf_manager.log(f"Invalid value for 'max_processes': {max_processes}, using default value: {default_max_processes} (no. of CPU threads)") # pylint: disable=line-too-long
-            max_processes = default_max_processes
+            max_processes: int = default_max_processes
         pdf_manager.multi_process_all(max_processes = max_processes or default_max_processes)
     else:
         if mode.lower() not in SINGLE_PROCESS_COMMANDS and mode.lower() in MULTI_PROCESS_COMMANDS:
@@ -51,3 +52,4 @@ def run(pdf_dir: str|None = None,
             pdf_manager.log(f"Max processes is not used in single-process mode, ignoring value: {max_processes}") # pylint: disable=line-too-long
         pdf_manager.log("Running in single-process mode")
         pdf_manager.process_all()
+    pdf_manager.log("PDF splitter finished")
