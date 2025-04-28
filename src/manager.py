@@ -15,6 +15,11 @@ class PdfManagerException(Exception):
     '''
     def __init__(self,
                  message: str | None = None):
+        '''
+            Pdf manager exception class
+
+            :param message: :class:`Optional(Union(str, None))` Message to the exception. Defaults to `None`
+        ''' # pylint: disable=line-too-long
         super().__init__(message or "Unknow PDF Manager exception")
 
 
@@ -40,14 +45,13 @@ class PdfManager:
         '''
             PDF manager class
 
-            Args:
-                pdf_dir (str): Directory containing PDF files
-                temp_dir (str): Temporary directory to store split PDF files
-                image_dir (str): Directory to store images
-                output_dir (str): Directory to store output files
-                backup_dir (str, optional): Directory to store backup files
-                logger (Logger, optional): Logger object (creates one if not provided)
-        '''
+            :param pdf_dir: :class:`Optional(Union(str, None))` PDF directory. Defaults to `None`
+            :param temp_dir: :class:`Optional(Union(str, None))` Temporary directory. Defaults to `None`
+            :param image_dir: :class:`Optional(Union(str, None))` Image directory. Defaults to `None`
+            :param output_dir: :class:`Optional(Union(str, None))` Output directory. Defaults to `None`
+            :param backup_dir: :class:`Optional(Union(str, None))` Backup directory. Defaults to `None`
+            :param logger: :class:`Optional(Union(Logger, None))` Logger class, creates one if not provided. Defaults to `None`
+        ''' # pylint: disable=line-too-long
         self.pdf_dir: str = self.check_path(pdf_dir)
         self.temp_dir: str = self.check_path(temp_dir)
         self.image_dir: str = self.check_path(image_dir)
@@ -61,8 +65,7 @@ class PdfManager:
         '''
             Logs content
 
-            Args:
-                content (str): Content to log
+            :param content: :class:`str` Content to log.
         '''
         self.logger.log(content)
 
@@ -72,8 +75,7 @@ class PdfManager:
         '''
             Check if the path exists, if not raise an exception
 
-            Args:
-                path (str): Path to check
+            :param dir_path: :class:`str` Path to check
         '''
         if not os.path.exists(dir_path):
             raise PdfManagerException(f"Path does not exist: {dir_path}")
@@ -98,8 +100,8 @@ class PdfManager:
         '''
             Create a lock file for the file
 
-            Args:
-                file_path (str): Path to the file
+            :param file_path: :class:`str` .lock file to create
+            :param encoding: :class:`Optional(str)` Encoding of the file. Defaults to `"utf-8-sig`
         '''
         try:
             with open(f"{file_path}.lock",
@@ -116,8 +118,7 @@ class PdfManager:
         '''
             Check if the file is locked
 
-            Args:
-                file_path (str): Path to the file
+            :param file_path: :class:`str` File path
         '''
         return os.path.exists(f"{file_path}.lock")
 
@@ -128,8 +129,8 @@ class PdfManager:
         '''
             Check if the file is locked and create a lock file if it is not
 
-            Args:
-                file_path (str): Path to the file
+            :param file_path: :class:`str` File path
+            :param encoding: :class:`Optional(str)` Encoding of the file. Defaults to `"utf-8-sig"`
         '''
         if not self.check_lock_file(file_path):
             self.create_lock_file(file_path,
@@ -143,8 +144,7 @@ class PdfManager:
         '''
             Remove the lock file for the file
 
-            Args:
-                file_path (str): Path to the file
+            :param file_path: :class:`str` File path
         '''
         try:
             os.remove(f"{file_path}.lock")
@@ -158,8 +158,7 @@ class PdfManager:
         '''
             Split the PDF file into individual pages
 
-            Args:
-                pdf_path (str): Path to the PDF file
+            :param pdf_path: :class:`str` File path
         '''
         splitter: PdfSplitter = PdfSplitter(pdf_path = pdf_path,
                                             output_dir = self.temp_dir,
@@ -173,8 +172,7 @@ class PdfManager:
         '''
             Convert the PDF file to images
 
-            Args:
-                pdf_path (str): Path to the PDF file
+            :param pdf_path: :class:`str` File path
         '''
         pdf2img: Pdf2Img = Pdf2Img(pdf_path = pdf_path,
                                    output_path = self.image_dir,
@@ -188,8 +186,7 @@ class PdfManager:
         '''
             Check for barcodes on the image
 
-            Args:
-                image_path (str): Path to the image file
+            :param image_path: :class:`str` File path
         '''
         scanner: Scanner = Scanner(image_path = image_path,
                                    logger = self.logger)
@@ -204,9 +201,9 @@ class PdfManager:
         '''
             Copy a file to a new location
 
-            Args:
-                file_path (str): Path to the file to copy
-                new_file_path (str): Path to the new file
+            :param file_path: :class:`str` File path
+            :param new_file_path: :class:`str` New file path
+            :param silet: :class:`Optional(bool)` Log copy or not. Defaults to `False`
         '''
         try:
             with open(file_path,
@@ -225,8 +222,7 @@ class PdfManager:
         '''
             Remove a file
 
-            Args:
-                file_path (str): Path to the file to remove
+            :param file_path: :class:`str` File path
         '''
         try:
             os.remove(file_path)
@@ -239,8 +235,7 @@ class PdfManager:
         '''
             Remove the file and its lock file
 
-            Args:
-                file_path (str): Path to the file
+            :param file_path: :class:`str` File path
         '''
         self.remove_file(file_path)
         self.remove_lock_file(file_path)
@@ -252,10 +247,9 @@ class PdfManager:
         '''
             Backup a file to the backup directory
 
-            Args:
-                file_path (str): Path to the file to backup
-                backup_dir (str, optional): Directory to backup the file to
-        '''
+            :param file_path: :class:`str` File path
+            :param backup_dir: :class:`Optional(Union(str, None))` Backupd directory. Defaults to `None`
+        ''' # pylint: disable=line-too-long
         backup_dir = backup_dir or self.backup_dir
         if backup_dir:
             if os.path.exists(backup_dir):
@@ -275,9 +269,10 @@ class PdfManager:
         '''
             Process a single PDF file
 
-            Args:
-                pdf (str): Path to the PDF file
-        '''
+            :param pdf_file: :class:`str` File path
+            :param i: :class:`Optional(Union(int, None))` Enumerate. Defaults to `None`
+            :param length: :class:`Optional(Union(int, None))` Length for enumerate. Default to `None`
+        ''' # pylint: disable=line-too-long
         pcs: str = f"{str(i + 1)}/{str(length)}." if i and length else ""
         try:
             self.log(f"{pcs} Processing {pdf_file}")
@@ -303,9 +298,10 @@ class PdfManager:
         '''
             Process a single PDF file using multiprocessing
 
-            Args:
-                pdf (str): Path to the PDF file
-        '''
+            :param pdf_file: :class:`str` File path
+            :param i: :class:`Optional(Union(int, None))` Enumerate. Defaults to `None`
+            :param length: :class:`Optional(Union(int, None))` Length for enumerate. Default to `None`
+        ''' # pylint: disable=line-too-long
         Process(target = self.process_file,
                 args = (pdf_file, i, length)).start()
 
@@ -327,9 +323,8 @@ class PdfManager:
         '''
             Wait if the number of processes is greater than max_processes
 
-            Parameters:
-                processes (list[Process]): List of processes
-                max_processes (int): Maximum number of processes
+            :param processes: :class:`list[Process]` List of processes to wait for
+            :param max_processes: :class:`int` Maximum number of processes.
         '''
         wait: bool = True
         while len(processes) >= max_processes:
@@ -345,8 +340,7 @@ class PdfManager:
         '''
             Remove dead processes from the list
 
-            Args:
-                processes (list[Process]): List of processes
+            :param processes: :class:`list[Process]` Remove dead processes.
         '''
         for process in processes:
             if not process.is_alive():
@@ -358,10 +352,15 @@ class PdfManager:
                           max_processes: int = 4) -> None:
         '''
             Process the PDF files in the directory using multiprocessing
+
+            :param max_processes: :class:`Optional(int)` Max processes to run. Defaults to `4`
         '''
         files: list[str] = self.files_in_dir()
         processes: list[Process] = []
         if not isinstance(max_processes, int):
+            if isinstance(max_processes, float):
+                self.log("'max_processes' is float, rounding it")
+                max_processes = int(round(max_processes, 0))
             raise PdfManagerException("'max_processes' should be an integer")
         if max_processes < 1:
             raise PdfManagerException("'max_processes' minimum value is 1, else it will make an infinite loop") # pylint: disable=line-too-long

@@ -1,4 +1,6 @@
-'''This module handles the creation of necessary directories for the BarcodeScanSplit project.'''
+'''
+    This module handles the creation of necessary directories for the BarcodeScanSplit project.
+'''
 
 import os
 
@@ -8,8 +10,7 @@ def make_dir(path: str) -> None:
     '''
         Create a directory if it does not exist
 
-        Parameters:
-            path (str): Directory path
+        :param path: :class:`str` Directory path
     '''
     if not os.path.exists(path):
         os.mkdir(path)
@@ -18,8 +19,7 @@ def make_dir_return_path(path: str) -> str:
     '''
         Create a directory if it does not exist and return the path
 
-        Parameters:
-            path (str): Directory path
+        :param path: :class:`str` Directory path
     '''
     dir_path: str = os.path.join(cwd_path,
                                  path)

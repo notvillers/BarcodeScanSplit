@@ -1,4 +1,6 @@
-'''Running the splitter by argument'''
+'''
+    Running the splitter by argument
+'''
 
 import os
 from villog import Logger
@@ -10,27 +12,26 @@ from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
                     make_dir_return_path)
 
 
-def run(pdf_dir: str|None = None,
-        temp_dir: str|None = None,
-        image_dir: str|None = None,
-        output_dir: str|None = None,
-        backup_dir: str|None = None,
-        log_dir: str|None = None,
+def run(pdf_dir: str | None = None,
+        temp_dir: str | None = None,
+        image_dir: str | None = None,
+        output_dir: str | None = None,
+        backup_dir: str | None = None,
+        log_dir: str | None = None,
         mode: str = "single",
         max_processes: int = default_max_processes) -> None:
     '''
         Main function for the splitter
     
-        Args:
-            pdf_dir (str|None): PDF directory
-            temp_dir (str|None): Temporary directory
-            image_dir (str|None): Image directory
-            output_dir (str|None): Output directory
-            backup_dir (str|None): Backup directory
-            log_dir (str|None): Log directory
-            mode (str): Mode of operation (single|multi)
-            max_processes (int): Maximum number of processes to run 
-    '''
+        :param pdf_dir: :class:`Optional(Union(str, None))` PDF directory. Defaults to `None`
+        :param temp_dir: :class:`Optional(Union(str, None))` Temporary directory. Defaults to `None`
+        :param image_dir: :class:`Optional(Union(str, None))` Image directory. Defaults to `None`
+        :param output_dir: :class:`Optional(Union(str, None))` Output directory. Defaults to `None`
+        :param backup_dir: :class:`Optional(Union(str, None))` Backup directory. Defaults to `None`
+        :param log_dir: :class:`Optional(Union(str, None))` Log directory. Defaults to `None`
+        :param mode: :class:`Optional(str)` Mode of operation. Defaults to `"single"`. Options: `"single"`, `"multi"`
+        :param max_processes: :class:`Optional(int)` Maximum number of processes to run. Defaults to `default_max_processes`
+    ''' # pylint: disable=line-too-long
     pdf_manager: PdfManager = PdfManager(pdf_dir = make_dir_return_path(pdf_dir or DOC_DIR),
                                          temp_dir = make_dir_return_path(temp_dir or TEMP_DIR),
                                          image_dir = make_dir_return_path(image_dir or IMG_DIR),

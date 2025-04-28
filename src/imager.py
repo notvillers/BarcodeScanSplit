@@ -16,15 +16,14 @@ class Pdf2Img:
     def __init__(self,
                  pdf_path: str,
                  output_path: str,
-                 logger: Logger = None) -> None:
+                 logger: Logger | None = None) -> None:
         '''
             Pdf2Img class
 
-            Args:
-                pdf_path (str): Path to the PDF file
-                output_path (str): Path to the output directory
-                logger (Logger, optional): Logger object (creates one if not provided
-        '''
+            :param pdf_path: :class:`str` Path to the .pdf file
+            :param output_path: :class:`str` Path to the output directory
+            :param logger: :class:`Optional(Union(logger, None))` Logger object, creates on if not provided. Defaults to `None`
+        ''' # pylint: disable=line-too-long
         self.pdf_path: str = pdf_path
         self.output_path: str = output_path
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
@@ -35,8 +34,7 @@ class Pdf2Img:
         '''
             Log content
 
-            Args:
-                content (str): Content to log
+            :param content: :class:`str` Content to log
         '''
         self.logger.log(content)
 

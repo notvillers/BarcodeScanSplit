@@ -1,4 +1,6 @@
-'''slave'''
+'''
+    slave
+'''
 
 from datetime import datetime
 
