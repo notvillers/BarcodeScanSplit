@@ -11,7 +11,6 @@ from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
                     SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
                     make_dir_return_path)
 
-
 def run(pdf_dir: str | None = None,
         temp_dir: str | None = None,
         image_dir: str | None = None,
