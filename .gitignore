@@ -5,6 +5,6 @@
 *.log
 *.png
 *.lock
-kiszall.*
-kiszla.*
+kiszall*
+kiszla*
 full.bat
