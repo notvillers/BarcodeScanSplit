@@ -254,8 +254,8 @@ class PdfManager:
         if backup_dir:
             if os.path.exists(backup_dir):
                 self.copy_file_as(file_path = file_path,
-                                new_file_path = os.path.join(backup_dir,
-                                                            os.path.basename(file_path)),
+                                  new_file_path = os.path.join(backup_dir,
+                                                               os.path.basename(file_path)),
                                 silent = True)
                 self.log(f"Backed up {file_path} to {backup_dir}")
                 return True
@@ -283,8 +283,8 @@ class PdfManager:
                         barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
                         self.remove_file(split_image_file)
                         self.copy_file_as(spit_pdf_file,
-                                        os.path.join(self.output_dir,
-                                                    f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file))) # pylint: disable = line-too-long
+                                          os.path.join(self.output_dir,
+                                                       f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file))) # pylint: disable = line-too-long
                         self.remove_file(spit_pdf_file)
                 self.remove_file_and_lock_file(pdf_file)
         except Exception as error: #pylint: disable = broad-exception-caught
