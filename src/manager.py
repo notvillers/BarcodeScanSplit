@@ -310,9 +310,10 @@ class PdfManager:
         '''
             Process the PDF files in the directory
         '''
+        self.log(f"Processing '{self.pdf_dir}'")
         files: list[str] = self.files_in_dir()
         if not files:
-            self.log("No files found.")
+            self.log("No files found")
             return
         for i, pdf in enumerate(files):
             self.process_file(pdf_file = pdf,
@@ -358,9 +359,10 @@ class PdfManager:
 
             :param max_processes: :class:`Optional(int)` Max processes to run. Defaults to `4`
         '''
+        self.log(f"Processing '{self.pdf_dir}'")
         files: list[str] = self.files_in_dir()
         if not files:
-            self.log("No files found.")
+            self.log("No files found in")
             return
         processes: list[Process] = []
         if not isinstance(max_processes, int):
