@@ -256,7 +256,7 @@ class PdfManager:
                 self.copy_file_as(file_path = file_path,
                                   new_file_path = os.path.join(backup_dir,
                                                                os.path.basename(file_path)),
-                                silent = True)
+                                  silent = True)
                 self.log(f"Backed up {file_path} to {backup_dir}")
                 return True
         return False
