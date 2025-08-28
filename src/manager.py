@@ -315,7 +315,7 @@ class PdfManager:
         if not files:
             self.log("No files found")
             return
-        self.log(f"Found {len(files)} file{'' if len(files) < 2 else 's'}")
+        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using single process")
         for i, pdf in enumerate(files):
             self.process_file(pdf_file = pdf,
                               i = i,
@@ -354,7 +354,7 @@ class PdfManager:
 
 
     def multi_process_all(self,
-                          max_processes: int = 4) -> None:
+                          max_processes: int = 2) -> None:
         '''
             Process the PDF files in the directory using multiprocessing
 
