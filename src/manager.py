@@ -374,7 +374,7 @@ class PdfManager:
         if max_processes < 1:
             raise PdfManagerException("'max_processes' minimum value is 1")
         # looping pdf files
-        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using {max_processes} processes")
+        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using {max_processes} processes") # pylint: disable=line-too-long
         # starting the multiprocessing
         freeze_support()
         for i, pdf in enumerate(files):
