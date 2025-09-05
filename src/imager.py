@@ -29,6 +29,7 @@ class Pdf2Img:
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
         self.image_path: list[str] | str = []
 
+
     def log(self,
             content: str) -> None:
         '''
@@ -37,6 +38,7 @@ class Pdf2Img:
             :param content: :class:`str` Content to log
         '''
         self.logger.log(content)
+
 
     def convert(self) -> str:
         '''

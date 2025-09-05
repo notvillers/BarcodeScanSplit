@@ -49,7 +49,8 @@ class PdfSplitter:
         self.log(f"Splitting {self.pdf_path}")
         base_name: str = os.path.basename(self.pdf_path)
         try:
-            with open(self.pdf_path, "rb") as pdf_file:
+            with open(self.pdf_path,
+                      "rb") as pdf_file:
                 reader = PdfReader(pdf_file)
                 for page_number, _ in enumerate(reader.pages):
                     writer = PdfWriter()

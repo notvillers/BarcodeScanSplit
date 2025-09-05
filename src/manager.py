@@ -365,18 +365,19 @@ class PdfManager:
         if not files:
             self.log("No files found in")
             return
-        processes: list[Process] = []
         if not isinstance(max_processes, int):
             if isinstance(max_processes, float):
                 self.log("'max_processes' is float, rounding it")
                 max_processes = int(round(max_processes, 0))
-            raise PdfManagerException("'max_processes' should be an integer")
+            else:
+                raise PdfManagerException("'max_processes' should be an integer")
         if max_processes < 1:
             raise PdfManagerException("'max_processes' minimum value is 1")
         # looping pdf files
-        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using {max_processes} processes")
+        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using {max_processes} processes") # pylint: disable=line-too-long
         # starting the multiprocessing
         freeze_support()
+        processes: list[Process] = []
         for i, pdf in enumerate(files):
             # creating a process for each pdf file
             process: Process = Process(target = self.process_file,
