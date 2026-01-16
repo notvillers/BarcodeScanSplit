@@ -3,7 +3,7 @@
 import os
 from dataclasses import dataclass
 from pyzbar.pyzbar import decode as pyz_decode, Decoded
-from PIL import Image
+from PIL import Image, ImageFile
 from villog import Logger
 
 @dataclass(slots = True)
@@ -19,7 +19,9 @@ class Scanner:
     '''
         Barcode scanner class
     '''
+
     __slots__: list[str] = ["image_path",
+                            "image_file",
                             "logger",
                             "barcodes"]
     def __init__(self,
@@ -32,6 +34,7 @@ class Scanner:
             :param logger: :class:`Optional(Union(Logger, None))` Logger object, creates one if not provided. Defaults to `None`
         ''' # pylint: disable=line-too-long
         self.image_path: str = image_path
+        self.image_file: ImageFile = Image.open(self.image_path)
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
         self.barcodes: list[Barcode] = []
 
@@ -44,13 +47,13 @@ class Scanner:
         '''
         self.logger.log(content)
 
+
     def scan_for_barcodes(self) -> list[Barcode]:
         '''
             Scan for barcodes
         '''
         try:
-            image = Image.open(self.image_path)
-            barcodes: list[Decoded] = pyz_decode(image)
+            barcodes: list[Decoded] = pyz_decode(self.image_file)
             if barcodes:
                 for barcode in barcodes:
                     barcode_type: str = barcode.type
