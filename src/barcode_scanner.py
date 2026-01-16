@@ -3,7 +3,10 @@
 import os
 from dataclasses import dataclass
 from pyzbar.pyzbar import decode as pyz_decode, Decoded
-from PIL import Image, ImageFile
+from PIL import Image, ImageOps
+from PIL.ImageFile import ImageFile
+from PIL.ImageEnhance import Contrast
+from PIL.ImageFilter import SHARPEN
 from villog import Logger
 
 @dataclass(slots = True)
@@ -19,11 +22,18 @@ class Scanner:
     '''
         Barcode scanner class
     '''
+    ENHANCE_MIN: int = 0
+    ENHANCE_MAX: int = 3
+
+    CONTRAST_RATIO: float = 2.0
+    INCREASE_RATIO: float = 2.0
 
     __slots__: list[str] = ["image_path",
                             "image_file",
+                            "image",
                             "logger",
-                            "barcodes"]
+                            "barcodes",
+                            "enhance_count"]
     def __init__(self,
                  image_path: str,
                  logger: Logger | None = None) -> None:
@@ -35,8 +45,10 @@ class Scanner:
         ''' # pylint: disable=line-too-long
         self.image_path: str = image_path
         self.image_file: ImageFile = Image.open(self.image_path)
+        self.image = self.image_file.copy()
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
         self.barcodes: list[Barcode] = []
+        self.enhance_count: int = self.ENHANCE_MIN
 
     def log(self,
             content: str) -> None:
@@ -48,12 +60,95 @@ class Scanner:
         self.logger.log(content)
 
 
+    def __inc_enhance_cnt(self) -> None:
+        '''
+            Increments enhance count
+        '''
+        self.enhance_count += 1
+
+
+    def __grayscale_image(self) -> None:
+        '''
+            Grayscales image
+        '''
+        self.image = ImageOps.grayscale(self.image)
+
+
+    def __sharpen_image(self) -> None:
+        '''
+            Sharpens image
+        '''
+        self.image = self.image.filter(SHARPEN)
+
+
+    def __contrast_image(self,
+                         contrast_ratio: float = CONTRAST_RATIO) -> None:
+        '''
+            Increases image contrast
+
+            :param contrast_ratio: :class:`float` defaults to `CONTRAST_RATIO`
+        '''
+        enhancer: Contrast = Contrast(self.image)
+        self.image = enhancer.enhance(contrast_ratio)
+
+
+    def __increase_image(self,
+                         increase_ratio: float = INCREASE_RATIO) -> None:
+        '''
+            Increase image size
+
+            :param increase_ratio: :class:`float` defaults to `INCREASE_RATIO`
+        '''
+        width, height = self.image.size
+        self.image = self.image.resize((round(width * increase_ratio,
+                                              0),
+                                        round(height * increase_ratio,
+                                              0)))
+
+    def __enhance_image(self) -> None:
+        '''
+            Enhances image
+        '''
+        match self.enhance_count:
+            case 0:
+                self.__grayscale_image()
+                self.__inc_enhance_cnt()
+                return None
+            case 1:
+                self.__sharpen_image()
+                self.__inc_enhance_cnt()
+                return None
+            case 2:
+                self.__contrast_image()
+                self.__inc_enhance_cnt()
+                return None
+            case 3:
+                self.__increase_image()
+                self.__inc_enhance_cnt()
+                return None
+            case _:
+                return None
+        return None
+
+    def decode_pyz(self) -> list[Decoded]:
+        '''
+            Decodes barcodes from `Image` and tries to enhance if fails
+        '''
+        barcodes: list[Decoded] = []
+        while self.enhance_count <= self.ENHANCE_MAX and not barcodes:
+            barcodes = pyz_decode(self.image)
+            if barcodes:
+                break
+            self.__enhance_image()
+        return barcodes
+
+
     def scan_for_barcodes(self) -> list[Barcode]:
         '''
             Scan for barcodes
         '''
         try:
-            barcodes: list[Decoded] = pyz_decode(self.image_file)
+            barcodes: list[Decoded] = self.decode_pyz()
             if barcodes:
                 for barcode in barcodes:
                     barcode_type: str = barcode.type
