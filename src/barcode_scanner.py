@@ -118,7 +118,7 @@ class Scanner:
                 self.__inc_enhance_cnt()
                 return None
             case 1:
-                self.__sharpen_image()
+                self.__increase_image()
                 self.__inc_enhance_cnt()
                 return None
             case 2:
@@ -126,7 +126,7 @@ class Scanner:
                 self.__inc_enhance_cnt()
                 return None
             case 3:
-                self.__increase_image()
+                self.__sharpen_image()
                 self.__inc_enhance_cnt()
                 return None
             case _:
