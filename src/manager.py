@@ -315,7 +315,7 @@ class PdfManager:
         if not files:
             self.log("No files found")
             return
-        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using single process")
+        self.log(f"Processing {len(files)} file{'' if len(files) < 2 else 's'} using single process") # pylint: disable=line-too-long
         for i, pdf in enumerate(files):
             self.process_file(pdf_file = pdf,
                               i = i,

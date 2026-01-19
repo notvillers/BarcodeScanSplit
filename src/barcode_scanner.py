@@ -71,6 +71,7 @@ class Scanner:
         '''
             Grayscales image
         '''
+        self.log(content = f"Grayscaling '{self.image_path}'")
         self.image = ImageOps.grayscale(self.image)
 
 
@@ -78,6 +79,7 @@ class Scanner:
         '''
             Sharpens image
         '''
+        self.log(content = f"Sharpening '{self.image_path}'")
         self.image = self.image.filter(SHARPEN)
 
 
@@ -88,6 +90,7 @@ class Scanner:
 
             :param contrast_ratio: :class:`float` defaults to `CONTRAST_RATIO`
         '''
+        self.log(content = f"Contrasting '{self.image_path}'")
         enhancer: Contrast = Contrast(self.image)
         self.image = enhancer.enhance(contrast_ratio)
 
@@ -99,11 +102,11 @@ class Scanner:
 
             :param increase_ratio: :class:`float` defaults to `INCREASE_RATIO`
         '''
+        self.log(content = f"Increasing '{self.image_path}'")
+        ratio_int: int = int(round(increase_ratio, 0))
         width, height = self.image.size
-        self.image = self.image.resize((round(width * increase_ratio,
-                                              0),
-                                        round(height * increase_ratio,
-                                              0)))
+        self.image = self.image.resize((width * ratio_int,
+                                        height * ratio_int))
 
     def __enhance_image(self) -> None:
         '''
