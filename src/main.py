@@ -18,7 +18,9 @@ def run(pdf_dir: str | None = None,
         backup_dir: str | None = None,
         log_dir: str | None = None,
         mode: str = "single",
-        max_processes: int = default_max_processes) -> None:
+        max_processes: int = default_max_processes,
+        ocr_prefixes: str | None = None,
+        ratio: float | None = None) -> None:
     '''
         Main function for the splitter
     
@@ -30,12 +32,17 @@ def run(pdf_dir: str | None = None,
         :param log_dir: :class:`Optional(Union(str, None))` Log directory. Defaults to `None`
         :param mode: :class:`Optional(str)` Mode of operation. Defaults to `"single"`. Options: `"single"`, `"multi"`
         :param max_processes: :class:`Optional(int)` Maximum number of processes to run. Defaults to `default_max_processes`
+        :param ocr_prefixes: :class:`Optional(Union(str, None))` defaults to `None`
+        :param ratio: :class:`Optional(Union(float, None))` defaults to `None`
     ''' # pylint: disable=line-too-long
+    ocr_prefix_list: list[str] | None = None if not ocr_prefixes else ocr_prefixes.strip().replace(" ", "").split(",")
     pdf_manager: PdfManager = PdfManager(pdf_dir = make_dir_return_path(pdf_dir or DOC_DIR),
                                          temp_dir = make_dir_return_path(temp_dir or TEMP_DIR),
                                          image_dir = make_dir_return_path(image_dir or IMG_DIR),
                                          output_dir = make_dir_return_path(output_dir or OUTPUT_DIR), # pylint: disable=line-too-long
                                          backup_dir = make_dir_return_path(backup_dir or BACKUP_DIR), # pylint: disable=line-too-long
+                                         ocr_prefixes = ocr_prefix_list,
+                                         ratio = ratio,
                                          logger = Logger(file_path = os.path.join(make_dir_return_path(log_dir or LOG_DIR), # pylint: disable=line-too-long
                                                                                   f"{date_string()}.log"))) # pylint: disable=line-too-long
     mode = str(mode).lower()

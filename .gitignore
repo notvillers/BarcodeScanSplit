@@ -10,3 +10,4 @@ kiszla*
 full.bat
 rust/target
 rust/*.lock
+test/

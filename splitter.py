@@ -16,7 +16,9 @@ arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF fi
                              ["-t", "--temp", str, "Temporary directory to store split PDF files"],
                              ["-i", "--image", str, "Temporary directory to store the images"],
                              ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"], # pylint: disable=line-too-long
-                             ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"]] # pylint: disable=line-too-long
+                             ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"], # pylint: disable=line-too-long
+                             ["-t", "--text_prefixes", str, "Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ')"], # pylint: disable=line-too-long
+                             ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given"]] # pylint: disable=line-too-long
 
 for arg in arg_list:
     parser.add_argument(arg[0],
@@ -37,7 +39,9 @@ def main() -> None:
                    backup_dir = args.backup,
                    log_dir = args.log,
                    mode = args.mode,
-                   max_processes = args.processes)
+                   max_processes = args.processes,
+                   ocr_prefixes = args.text_prefixes,
+                   ratio = args.ratio)
 
 
 if __name__ == '__main__':

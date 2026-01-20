@@ -8,6 +8,7 @@ from villog import Logger
 from src.pdf_splitter import PdfSplitter
 from src.imager import Pdf2Img
 from src.barcode_scanner import Scanner, Barcode
+from src.ocr_ready import ImgData, OcrReader
 
 class PdfManagerException(Exception):
     '''
@@ -34,6 +35,8 @@ class PdfManager:
                  "image_dir",
                  "output_dir",
                  "backup_dir",
+                 "ocr_prefixes",
+                 "ratio",
                  "logger"]
     def __init__(self,
                  pdf_dir: str,
@@ -41,6 +44,8 @@ class PdfManager:
                  image_dir: str,
                  output_dir: str,
                  backup_dir: str | None = None,
+                 ocr_prefixes: list[str] | None = None,
+                 ratio: float | None = None,
                  logger: Logger | None = None) -> None:
         '''
             PDF manager class
@@ -50,6 +55,8 @@ class PdfManager:
             :param image_dir: :class:`Optional(Union(str, None))` Image directory. Defaults to `None`
             :param output_dir: :class:`Optional(Union(str, None))` Output directory. Defaults to `None`
             :param backup_dir: :class:`Optional(Union(str, None))` Backup directory. Defaults to `None`
+            :param ocr_prefixes: class:`Optional(Union(list[str], None))` Defaults to `None`
+            :param ratio: :class:`Optional(Union(float, None))` Defaults to `None`
             :param logger: :class:`Optional(Union(Logger, None))` Logger class, creates one if not provided. Defaults to `None`
         ''' # pylint: disable=line-too-long
         self.pdf_dir: str = self.check_path(pdf_dir)
@@ -57,6 +64,8 @@ class PdfManager:
         self.image_dir: str = self.check_path(image_dir)
         self.output_dir: str = self.check_path(output_dir)
         self.backup_dir: str | None = self.check_path(backup_dir) if backup_dir else None
+        self.ocr_prefixes: list[str] | None = ocr_prefixes
+        self.ratio: list[float] | None = ratio
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
 
 
@@ -194,6 +203,24 @@ class PdfManager:
         return scanner.barcodes
 
 
+    def check_text_on_image(self,
+                            image_path: str) -> list[Barcode]:
+        '''
+            Check with OCR
+
+            :param image_path: :class:`str`
+        '''
+        if not self.ocr_prefixes:
+            return []
+        ocr_reader: OcrReader = OcrReader(image_data = ImgData(path = image_path,
+                                                               ratio = self.ratio or 1),
+                                          prefixes = self.ocr_prefixes,
+                                          logger = self.logger)
+        texts: list[str] = ocr_reader.get_texts()
+        return [Barcode(barcode_type = "ocr_read",
+                        barcode_data = text) for text in texts]
+
+
     def copy_file_as(self,
                      file_path: str,
                      new_file_path: str,
@@ -281,6 +308,8 @@ class PdfManager:
                 for spit_pdf_file in self.split_pdf(pdf_file):
                     for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
                         barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
+                        if not barcodes:
+                            barcodes = self.check_text_on_image(image_path = split_image_file)
                         self.remove_file(split_image_file)
                         self.copy_file_as(spit_pdf_file,
                                           os.path.join(self.output_dir,
