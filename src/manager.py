@@ -3,6 +3,7 @@
 '''
 
 import os
+from pathlib import Path
 from multiprocessing import Process, freeze_support
 from villog import Logger
 from src.pdf_splitter import PdfSplitter
@@ -203,6 +204,22 @@ class PdfManager:
         return scanner.barcodes
 
 
+    def file_enum_for_ocr(self,
+                          path: str) -> str:
+        '''
+            If no got by ocr, then giving it a enum
+
+            :param export_file_name: :class:`str`
+        '''
+        f_path: Path = Path(path)
+        base_stem: str = f_path.stem
+        i: int = 0
+        while f_path.exists():
+            f_path.stem = base_stem + "_" + str(i)
+            i += 1
+        return str(f_path)
+
+
     def check_text_on_image(self,
                             image_path: str) -> list[Barcode]:
         '''
@@ -219,6 +236,22 @@ class PdfManager:
         texts: list[str] = ocr_reader.get_texts()
         return [Barcode(barcode_type = "ocr_read",
                         barcode_data = text) for text in texts]
+
+
+    def ocr_barcodes(self,
+                     image_path) -> list[Barcode]:
+        '''
+            OCR barcodes with enum
+
+            :param image_path: :class:`str`
+        '''
+        barcodes: list[Barcode] = self.check_text_on_image(image_path = image_path)
+        path_barcodes: list[Barcode] = []
+        for barcode in barcodes:
+            barcode_path: str = os.path.join(self.output_dir, barcode.barcode_data, ".pdf")
+            path_barcodes.append(Barcode(barcode_type = barcode.barcode_type,
+                                         barcode_data = self.file_enum_for_ocr(barcode_path)))
+        return barcodes
 
 
     def copy_file_as(self,
