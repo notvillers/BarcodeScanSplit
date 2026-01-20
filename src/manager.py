@@ -342,7 +342,7 @@ class PdfManager:
                     for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
                         barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
                         #if not barcodes:
-                        #    barcodes = self.check_text_on_image(image_path = split_image_file)
+                        #    barcodes = self.ocr_barcodes(image_path = split_image_file)
                         self.remove_file(split_image_file)
                         self.copy_file_as(spit_pdf_file,
                                           os.path.join(self.output_dir,
