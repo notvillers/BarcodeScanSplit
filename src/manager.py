@@ -340,7 +340,7 @@ class PdfManager:
                 self.backup_file(pdf_file)
                 for spit_pdf_file in self.split_pdf(pdf_file):
                     for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
-                        barcodes: list[Barcode] = self.ocr_barcodes(split_image_file)
+                        barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
                         #if not barcodes:
                         #    barcodes = self.check_text_on_image(image_path = split_image_file)
                         self.remove_file(split_image_file)
