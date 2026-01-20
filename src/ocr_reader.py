@@ -39,7 +39,7 @@ class OcrReader:
         '''
             OCR reader class
 
-            :param img_data: :class:`ImgData`
+            :param image_data: :class:`ImgData`
             :param prefixes: :class:`list[str]`
             :param languages: :class:`Optional(list[str])` defaults to `["hu", "en"]`
             :param logger: :class:`Optional(Union(Logger, None))` Defaults to `None`
