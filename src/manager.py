@@ -9,7 +9,7 @@ from villog import Logger
 from src.pdf_splitter import PdfSplitter
 from src.imager import Pdf2Img
 from src.barcode_scanner import Scanner, Barcode
-from src.ocr_ready import ImgData, OcrReader
+from src.ocr_reader import ImgData, OcrReader
 
 class PdfManagerException(Exception):
     '''
@@ -217,7 +217,7 @@ class PdfManager:
         while f_path.exists():
             f_path.stem = base_stem + "_" + str(i)
             i += 1
-        return str(f_path)
+        return i
 
 
     def check_text_on_image(self,
@@ -250,7 +250,7 @@ class PdfManager:
         for barcode in barcodes:
             barcode_path: str = os.path.join(self.output_dir, barcode.barcode_data, ".pdf")
             path_barcodes.append(Barcode(barcode_type = barcode.barcode_type,
-                                         barcode_data = self.file_enum_for_ocr(barcode_path)))
+                                         barcode_data = f"{barcode.barcode_type}_{str(self.file_enum_for_ocr(barcode_path))}")) # pylint: disable=line-too-long
         return barcodes
 
 
@@ -340,7 +340,7 @@ class PdfManager:
                 self.backup_file(pdf_file)
                 for spit_pdf_file in self.split_pdf(pdf_file):
                     for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
-                        barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
+                        barcodes: list[Barcode] = self.ocr_barcodes(split_image_file)
                         if not barcodes:
                             barcodes = self.check_text_on_image(image_path = split_image_file)
                         self.remove_file(split_image_file)

@@ -31,7 +31,7 @@ class OcrReader:
     '''
     REPLACES: list[str] = ["O", "0",
                             "l", "1"]
-    def __init__(self,
+    def __init__(self, # pylint: disable=dangerous-default-value
                  image_data: ImgData,
                  prefixes: list[str],
                  languages: list[str] = ["hu", "en"],
@@ -48,7 +48,7 @@ class OcrReader:
         self.prefixes: list[str] = prefixes
         self.languages: list[str] = languages
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
-        self.image = cv2.imread(self.img_data.path) # pylint: disable=no-member
+        self.image = cv2.imread(self.image_data.path) # pylint: disable=no-member
         self.__crop_to_ratio()
 
 
