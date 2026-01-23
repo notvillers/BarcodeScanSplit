@@ -204,54 +204,51 @@ class PdfManager:
         return scanner.barcodes
 
 
-    def file_enum_for_ocr(self,
-                          path: str) -> str:
+    def get_output_path(self,
+                        base_name: str) -> str:
         '''
-            If no got by ocr, then giving it a enum
+            Returns output patj
 
-            :param export_file_name: :class:`str`
+            :param base_name: :class:`str`
         '''
-        f_path: Path = Path(path)
-        base_stem: str = f_path.stem
-        i: int = 0
-        while f_path.exists():
-            f_path.stem = base_stem + "_" + str(i)
+        return os.path.join(self.output_dir,
+                            f"{base_name}.pdf")
+
+
+    def get_enum_for_ocr(self,
+                         base_name: str) -> str:
+        '''
+            Gets enum for ocr read pdf
+
+            :param base_name: :class:`str`
+        '''
+        output_path: str = os.path.join(self.output_dir,
+                                        f"{base_name}.pdf")
+        path: Path = Path(output_path)
+        i: int = 1
+        path = path.with_stem(f"{path.stem}_{i}")
+        while os.path.exists(str(path)):
             i += 1
-        return i
+            path.stem[-1] = str(i)
+            path = path.with_stem(f"{path.stem[:-1]}_{i}")
+        return path.stem
 
 
-    def check_text_on_image(self,
-                            image_path: str) -> list[Barcode]:
+    def get_prefixed_text_from_image(self,
+                                     image_path: str) -> list[Barcode]:
         '''
-            Check with OCR
+            Gets first `self.ocr_prefixed` text from image, if found
 
-            :param image_path: :class:`str`
+            :param image_data: :class:`str`
         '''
-        if not self.ocr_prefixes:
-            return []
         ocr_reader: OcrReader = OcrReader(image_data = ImgData(path = image_path,
-                                                               ratio = self.ratio or 1),
+                                                               ratio = self.ratio),
                                           prefixes = self.ocr_prefixes,
                                           logger = self.logger)
-        texts: list[str] = ocr_reader.get_texts()
-        return [Barcode(barcode_type = "ocr_read",
-                        barcode_data = text) for text in texts]
-
-
-    def ocr_barcodes(self,
-                     image_path) -> list[Barcode]:
-        '''
-            OCR barcodes with enum
-
-            :param image_path: :class:`str`
-        '''
-        barcodes: list[Barcode] = self.check_text_on_image(image_path = image_path)
-        path_barcodes: list[Barcode] = []
-        for barcode in barcodes:
-            barcode_path: str = os.path.join(self.output_dir, barcode.barcode_data, ".pdf")
-            path_barcodes.append(Barcode(barcode_type = barcode.barcode_type,
-                                         barcode_data = f"{barcode.barcode_type}_{str(self.file_enum_for_ocr(barcode_path))}")) # pylint: disable=line-too-long
+        barcodes: list[Barcode] = [Barcode(barcode_type = "ocr_reader",
+                                           barcode_data = self.get_enum_for_ocr(text)) for text in ocr_reader.get_texts()] # pylint: disable=line-too-long
         return barcodes
+
 
 
     def copy_file_as(self,
@@ -308,7 +305,7 @@ class PdfManager:
             Backup a file to the backup directory
 
             :param file_path: :class:`str` File path
-            :param backup_dir: :class:`Optional(Union(str, None))` Backupd directory. Defaults to `None`
+            :param backup_dir: :class:`Optional(Union(str, None))` Backupd directory. Defaults to `None` and uses `self.backup_dir`
         ''' # pylint: disable=line-too-long
         backup_dir = backup_dir or self.backup_dir
         if backup_dir:
@@ -338,18 +335,21 @@ class PdfManager:
             self.log(f"{pcs} Processing {pdf_file}")
             if not self.check_and_create_lock_file(pdf_file):
                 self.backup_file(pdf_file)
-                for spit_pdf_file in self.split_pdf(pdf_file):
-                    for split_image_file in self.convert_pdf_to_images(spit_pdf_file):
+                split_files: list[str] = self.split_pdf(pdf_file)
+                for cnt, split_pdf_file in enumerate(split_files):
+                    self.log(f"{cnt + 1}/{len(split_files)}.: {pdf_file} -> {split_pdf_file}")
+                    for split_image_file in self.convert_pdf_to_images(split_pdf_file):
                         barcodes: list[Barcode] = self.check_barcode_on_image(split_image_file)
-                        #if not barcodes:
-                        #    barcodes = self.ocr_barcodes(image_path = split_image_file)
+                        if not barcodes and self.ratio is not None and self.ocr_prefixes:
+                            self.log(f"Trying to OCR read '{split_image_file}'")
+                            barcodes = self.get_prefixed_text_from_image(split_image_file)
                         self.remove_file(split_image_file)
-                        self.copy_file_as(spit_pdf_file,
-                                          os.path.join(self.output_dir,
-                                                       f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(spit_pdf_file))) # pylint: disable = line-too-long
-                        self.remove_file(spit_pdf_file)
+                        self.copy_file_as(split_pdf_file,
+                                            os.path.join(self.output_dir,
+                                                        f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(split_pdf_file))) # pylint: disable=line-too-long
+                        self.remove_file(split_pdf_file)
                 self.remove_file_and_lock_file(pdf_file)
-        except Exception as error: #pylint: disable = broad-exception-caught
+        except Exception as error: #pylint: disable=broad-exception-caught
             self.log(f"Error processing {pdf_file}: {error}")
 
 

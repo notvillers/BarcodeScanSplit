@@ -29,8 +29,8 @@ class OcrReader:
     '''
         OCR reader class
     '''
-    REPLACES: list[str] = ["O", "0",
-                            "l", "1"]
+    REPLACES: list[str] = [["O","0"],
+                           ["l", "1"]]
     def __init__(self, # pylint: disable=dangerous-default-value
                  image_data: ImgData,
                  prefixes: list[str],
@@ -71,7 +71,7 @@ class OcrReader:
             self.image_data.ratio = 1.0
 
         height, width = self.image.shape[:2]
-        self.image = self.image[:int(height * self.image_data), :width]
+        self.image = self.image[:int(height * self.image_data.ratio), :width]
 
 
     def __read_file_text(self) -> list[str]:
@@ -112,7 +112,7 @@ class OcrReader:
         return texts
 
 
-    def get_texts(self) -> str:
+    def get_texts(self) -> list[str]:
         '''
             Gets first no text
         '''

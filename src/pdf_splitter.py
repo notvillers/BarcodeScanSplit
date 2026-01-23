@@ -51,17 +51,18 @@ class PdfSplitter:
         try:
             with open(self.pdf_path,
                       "rb") as pdf_file:
-                reader = PdfReader(pdf_file)
+                reader: PdfReader = PdfReader(pdf_file)
+                self.log(f"{self.pdf_path} is {str(len(reader.pages))} page{'s' if len(reader.pages) > 1 else ''}") # pylint: disable=line-too-long
                 for page_number, _ in enumerate(reader.pages):
-                    writer = PdfWriter()
+                    writer: PdfWriter = PdfWriter()
                     writer.add_page(reader.pages[page_number])
                     name_without_ext: str = base_name.replace(".pdf", "").replace(".PDF", "")
-                    output_pdf_path = os.path.join(self.output_dir,
-                                                   f"{name_without_ext}_{page_number}.pdf")
+                    output_pdf_path: str = os.path.join(self.output_dir,
+                                                        f"{name_without_ext}_{page_number}.pdf")
                     with open(output_pdf_path,
                               "wb") as output_pdf:
                         writer.write(output_pdf)
                     self.log(f"Page {page_number + 1} saved to {output_pdf_path}")
                     self.output_files.append(output_pdf_path)
-        except Exception as error: #pylint: disable=broad-exception-caught
+        except Exception as error: # pylint: disable=broad-exception-caught
             self.log(f"Error splitting {base_name}: {error}")

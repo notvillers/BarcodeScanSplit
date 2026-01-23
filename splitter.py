@@ -18,7 +18,7 @@ arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF fi
                              ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"], # pylint: disable=line-too-long
                              ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"], # pylint: disable=line-too-long
                              ["-f", "--prefixes", str, "Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ')"], # pylint: disable=line-too-long
-                             ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given"]] # pylint: disable=line-too-long
+                             ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given (ex.: 0.4)"]] # pylint: disable=line-too-long
 
 for arg in arg_list:
     parser.add_argument(arg[0],
