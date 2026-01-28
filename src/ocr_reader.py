@@ -3,18 +3,18 @@
 '''
 
 import os
-import logging
-import warnings
+from logging import getLogger, ERROR
+from warnings import filterwarnings
 from dataclasses import dataclass
 import cv2
-import easyocr
+from easyocr import Reader
 from villog import Logger
 
-logging.getLogger("easyocr").setLevel(logging.ERROR)
-logging.getLogger("torch").setLevel(logging.ERROR)
+getLogger("easyocr").setLevel(ERROR)
+getLogger("torch").setLevel(ERROR)
 
-warnings.filterwarnings("ignore",
-                        message = ".*pin_memory.*no accelerator is found.*")
+filterwarnings("ignore",
+               message = ".*pin_memory.*no accelerator is found.*")
 
 @dataclass(slots = True)
 class ImgData:
@@ -78,8 +78,8 @@ class OcrReader:
         '''
             Reads text on given file on the given ratio
         '''
-        reader: easyocr.Reader = easyocr.Reader(self.languages,
-                                                gpu = True)
+        reader: Reader = Reader(self.languages,
+                                gpu = True)
         results = reader.readtext(self.image)
 
         return [text for _, text, _ in results]

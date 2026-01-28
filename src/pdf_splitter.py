@@ -49,8 +49,8 @@ class PdfSplitter:
         self.log(f"Splitting {self.pdf_path}")
         base_name: str = os.path.basename(self.pdf_path)
         try:
-            with open(self.pdf_path,
-                      "rb") as pdf_file:
+            with open(file = self.pdf_path,
+                      mode = "rb") as pdf_file:
                 reader: PdfReader = PdfReader(pdf_file)
                 self.log(f"{self.pdf_path} is {str(len(reader.pages))} page{'s' if len(reader.pages) > 1 else ''}") # pylint: disable=line-too-long
                 for page_number, _ in enumerate(reader.pages):
@@ -59,8 +59,8 @@ class PdfSplitter:
                     name_without_ext: str = base_name.replace(".pdf", "").replace(".PDF", "")
                     output_pdf_path: str = os.path.join(self.output_dir,
                                                         f"{name_without_ext}_{page_number}.pdf")
-                    with open(output_pdf_path,
-                              "wb") as output_pdf:
+                    with open(file = output_pdf_path,
+                              mode = "wb") as output_pdf:
                         writer.write(output_pdf)
                     self.log(f"Page {page_number + 1} saved to {output_pdf_path}")
                     self.output_files.append(output_pdf_path)

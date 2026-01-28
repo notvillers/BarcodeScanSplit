@@ -3,7 +3,8 @@
 import os
 from dataclasses import dataclass
 from pyzbar.pyzbar import decode as pyz_decode, Decoded
-from PIL import Image, ImageOps
+from PIL import Image
+from PIL.ImageOps import grayscale
 from PIL.ImageFile import ImageFile
 from PIL.ImageEnhance import Contrast
 from PIL.ImageFilter import SHARPEN
@@ -34,6 +35,7 @@ class Scanner:
                             "logger",
                             "barcodes",
                             "enhance_count"]
+
     def __init__(self,
                  image_path: str,
                  logger: Logger | None = None) -> None:
@@ -72,7 +74,7 @@ class Scanner:
             Grayscales image
         '''
         self.log(content = f"Grayscaling '{self.image_path}'")
-        self.image = ImageOps.grayscale(self.image)
+        self.image = grayscale(self.image)
 
 
     def __sharpen_image(self) -> None:

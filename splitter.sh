@@ -8,7 +8,7 @@ cd $script_dir
 source .venv/bin/activate
 
 # Runs the script
-python -B splitter.py -m multi
+python -B splitter.py -m single
 
 # Deactivates the venv
 deactivate

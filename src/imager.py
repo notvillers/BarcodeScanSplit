@@ -2,7 +2,7 @@
 
 import os
 from pdf2image import convert_from_path
-from PIL import Image
+from PIL.Image import Image
 from villog import Logger
 
 class Pdf2Img:
@@ -44,7 +44,7 @@ class Pdf2Img:
         '''
             Convert to image
         '''
-        images: list[Image.Image] = convert_from_path(self.pdf_path)
+        images: list[Image] = convert_from_path(self.pdf_path)
         pdf_path_name: str = os.path.basename(self.pdf_path).replace(".pdf", "").replace(".PDF", "")
         for i, image in enumerate(images):
             image_path: str = os.path.join(self.output_path,

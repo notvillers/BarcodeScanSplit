@@ -1,10 +1,10 @@
 '''Running the splitter by argument'''
 
-import argparse
+from argparse import ArgumentParser, Namespace
 from multiprocessing import freeze_support
-from src.main import run as run_by_arg_run
+from src.main import PathConfig, run as run_by_arg_run
 
-parser: argparse.ArgumentParser = argparse.ArgumentParser(
+parser: ArgumentParser = ArgumentParser(
     prog = "PDF Splitter",
     description = "Split PDF files into individual pages, by reading the barcode on each page"
 )
@@ -18,7 +18,7 @@ arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF fi
                              ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"], # pylint: disable=line-too-long
                              ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"], # pylint: disable=line-too-long
                              ["-f", "--prefixes", str, "Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ')"], # pylint: disable=line-too-long
-                             ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given (ex.: 0.4)"]] # pylint: disable=line-too-long
+                             ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given (ex.: 0.4 means it scans from top to bottom 40%% of the image)"]] # pylint: disable=line-too-long
 
 for arg in arg_list:
     parser.add_argument(arg[0],
@@ -26,18 +26,19 @@ for arg in arg_list:
                         type = arg[2],
                         help = arg[3])
 
-args: argparse.Namespace = parser.parse_args()
+args: Namespace = parser.parse_args()
 
 def main() -> None:
     '''
         Main function
     '''
-    run_by_arg_run(pdf_dir = args.source,
-                   temp_dir = args.temp,
-                   image_dir = args.image,
-                   output_dir = args.destination,
-                   backup_dir = args.backup,
-                   log_dir = args.log,
+    path_config: PathConfig = PathConfig(source = args.source,
+                                         destination = args.destination,
+                                         temp = args.temp,
+                                         image = args.image,
+                                         backup = args.backup,
+                                         log = args.log)
+    run_by_arg_run(path_config = path_config,
                    mode = args.mode,
                    max_processes = args.processes,
                    ocr_prefixes = args.prefixes,

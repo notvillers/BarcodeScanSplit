@@ -17,6 +17,8 @@ Reads pdf files from directory, split the pages and renames them by the barcode 
 - ```-i```, ```--image```: Temporary directory to store the images.
 - ```-m```, ```--mode```: Processing mode. (```single```, ```multi```)
 - ```-p```, ```--processes```: Maximum number of processes to run, by default is the number of CPU threads.
+- ```-f```, ```--prefixes```: Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ')
+- ```-r```, ```--ratio```: Image ratio to check for OCR, only neccessary if ```--text-prefixes``` is given (ex.: **0.4** means it scans from top to bottom 40% of the image)
 
 (If any of the arguments left empty the script will read its pair from the default [config](config.py) file.)
 
