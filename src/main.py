@@ -3,27 +3,11 @@
 '''
 
 import os
-from dataclasses import dataclass
 from villog import Logger
 from src.slave import date_string
+from src.classes.path_config import PathConfig
 from src.manager import PdfManager
-from config import (LOG_DIR, DOC_DIR, TEMP_DIR, IMG_DIR, OUTPUT_DIR, BACKUP_DIR,
-                    default_max_processes,
-                    SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS,
-                    make_dir_return_path)
-
-@dataclass(slots = False)
-class PathConfig:
-    '''
-        `PathConfig` class
-    '''
-    source: str | None = None
-    destination: str | None = None
-    temp: str | None = None
-    image: str | None = None
-    backup: str | None = None
-    log: str | None = None
-
+from config import default_max_processes, SINGLE_PROCESS_COMMANDS, MULTI_PROCESS_COMMANDS
 
 def run(path_config: PathConfig | None = None,
         mode: str = "single",
@@ -41,15 +25,11 @@ def run(path_config: PathConfig | None = None,
     ''' # pylint: disable=line-too-long
     path_config = path_config or PathConfig()
     ocr_prefix_list: list[str] | None = None if not ocr_prefixes or not isinstance(ocr_prefixes, str) else ocr_prefixes.strip().replace(" ", "").split(",")
-    pdf_manager: PdfManager = PdfManager(pdf_dir = make_dir_return_path(path_config.source or DOC_DIR),
-                                         temp_dir = make_dir_return_path(path_config.temp or TEMP_DIR),
-                                         image_dir = make_dir_return_path(path_config.image or IMG_DIR),
-                                         output_dir = make_dir_return_path(path_config.destination or OUTPUT_DIR), # pylint: disable=line-too-long
-                                         backup_dir = make_dir_return_path(path_config.backup or BACKUP_DIR), # pylint: disable=line-too-long
+    pdf_manager: PdfManager = PdfManager(path_config = path_config,
                                          ocr_prefixes = ocr_prefix_list,
                                          ratio = ratio,
-                                         logger = Logger(file_path = os.path.join(make_dir_return_path(path_config.log or LOG_DIR), # pylint: disable=line-too-long
-                                                                                  f"{date_string()}.log"))) # pylint: disable=line-too-long
+                                         logger = Logger(file_path = os.path.join(path_config.log,
+                                                                                  f"{date_string()}.log")))
     mode = str(mode).lower()
     if mode in MULTI_PROCESS_COMMANDS:
         pdf_manager.log("Running in multi-process mode")

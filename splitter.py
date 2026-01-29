@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from multiprocessing import freeze_support
+from config import SOURCE_DIR, DESTINATION_DIR, TEMP_DIR, IMG_DIR, LOG_DIR
 from src.main import PathConfig, run as run_by_arg_run
 
 parser: ArgumentParser = ArgumentParser(
@@ -32,12 +33,12 @@ def main() -> None:
     '''
         Main function
     '''
-    path_config: PathConfig = PathConfig(source = args.source,
-                                         destination = args.destination,
-                                         temp = args.temp,
-                                         image = args.image,
+    path_config: PathConfig = PathConfig(source = args.source or SOURCE_DIR,
+                                         destination = args.destination or DESTINATION_DIR,
+                                         temp = args.temp or TEMP_DIR,
+                                         image = args.image or IMG_DIR,
                                          backup = args.backup,
-                                         log = args.log)
+                                         log = args.log or LOG_DIR)
     run_by_arg_run(path_config = path_config,
                    mode = args.mode,
                    max_processes = args.processes,

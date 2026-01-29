@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from multiprocessing import Process, freeze_support
 from villog import Logger
+from src.classes.path_config import PathConfig
 from src.pdf_splitter import PdfSplitter
 from src.imager import Pdf2Img
 from src.barcode_scanner import Scanner, Barcode
@@ -31,40 +32,24 @@ class PdfManager:
     '''
     EXTENSION: str = ".pdf"
 
-    __slots__ = ["pdf_dir",
-                 "temp_dir",
-                 "image_dir",
-                 "output_dir",
-                 "backup_dir",
+    __slots__ = ["config",
                  "ocr_prefixes",
                  "ratio",
                  "logger"]
     def __init__(self,
-                 pdf_dir: str,
-                 temp_dir: str,
-                 image_dir: str,
-                 output_dir: str,
-                 backup_dir: str | None = None,
+                 path_config: PathConfig,
                  ocr_prefixes: list[str] | None = None,
                  ratio: float | None = None,
                  logger: Logger | None = None) -> None:
         '''
             PDF manager class
 
-            :param pdf_dir: :class:`Optional(Union(str, None))` PDF directory. Defaults to `None`
-            :param temp_dir: :class:`Optional(Union(str, None))` Temporary directory. Defaults to `None`
-            :param image_dir: :class:`Optional(Union(str, None))` Image directory. Defaults to `None`
-            :param output_dir: :class:`Optional(Union(str, None))` Output directory. Defaults to `None`
-            :param backup_dir: :class:`Optional(Union(str, None))` Backup directory. Defaults to `None`
+            :param path_config: :class:`PathConfig`
             :param ocr_prefixes: class:`Optional(Union(list[str], None))` Defaults to `None`
             :param ratio: :class:`Optional(Union(float, None))` Defaults to `None`
             :param logger: :class:`Optional(Union(Logger, None))` Logger class, creates one if not provided. Defaults to `None`
         ''' # pylint: disable=line-too-long
-        self.pdf_dir: str = self.__check_path(pdf_dir)
-        self.temp_dir: str = self.__check_path(temp_dir)
-        self.image_dir: str = self.__check_path(image_dir)
-        self.output_dir: str = self.__check_path(output_dir)
-        self.backup_dir: str | None = self.__check_path(backup_dir) if backup_dir else None
+        self.config: PathConfig = path_config
         self.ocr_prefixes: list[str] | None = ocr_prefixes
         self.ratio: list[float] | None = ratio
         self.logger: Logger = logger or Logger(file_path = f"{os.path.dirname(__file__)}.log")
@@ -80,26 +65,14 @@ class PdfManager:
         self.logger.log(content)
 
 
-    def __check_path(self,
-                     dir_path: str) -> str:
-        '''
-            Check if the path exists, if not raise an exception
-
-            :param dir_path: :class:`str` Path to check
-        '''
-        if not os.path.exists(dir_path):
-            raise PdfManagerException(f"Path does not exist: {dir_path}")
-        return dir_path
-
-
     def __files_in_dir(self) -> list[str]:
         '''
             Get the list of PDF files in {pdf_dir} with the extension of {EXTENSION}
         '''
         files_in_dir: list[str] = []
-        for file in os.listdir(self.pdf_dir):
+        for file in os.listdir(self.config.source):
             if file.lower().endswith(self.EXTENSION):
-                files_in_dir.append(os.path.join(self.pdf_dir,
+                files_in_dir.append(os.path.join(self.config.source,
                                                  file))
         return files_in_dir
 
@@ -171,7 +144,7 @@ class PdfManager:
             :param pdf_path: :class:`str` File path
         '''
         splitter: PdfSplitter = PdfSplitter(pdf_path = pdf_path,
-                                            output_dir = self.temp_dir,
+                                            output_dir = self.config.temp,
                                             logger = self.logger)
         splitter.split()
         return splitter.output_files
@@ -185,7 +158,7 @@ class PdfManager:
             :param pdf_path: :class:`str` File path
         '''
         pdf2img: Pdf2Img = Pdf2Img(pdf_path = pdf_path,
-                                   output_path = self.image_dir,
+                                   output_path = self.config.image,
                                    logger = self.logger)
         pdf2img.convert()
         return pdf2img.image_path
@@ -211,7 +184,7 @@ class PdfManager:
 
             :param base_name: :class:`str`
         '''
-        output_path: str = os.path.join(self.output_dir,
+        output_path: str = os.path.join(self.config.destination,
                                         f"{base_name}.pdf")
         path: Path = Path(output_path)
         i: int = 1
@@ -293,7 +266,7 @@ class PdfManager:
             :param file_path: :class:`str` File path
             :param backup_dir: :class:`Optional(Union(str, None))` Backupd directory. Defaults to `None` and uses `self.backup_dir`
         ''' # pylint: disable=line-too-long
-        backup_dir = backup_dir or self.backup_dir
+        backup_dir = backup_dir or self.config.backup
         if backup_dir:
             if os.path.exists(backup_dir):
                 self.__copy_file_as(file_path = file_path,
@@ -305,9 +278,9 @@ class PdfManager:
 
 
     def process_file(self,
-                       pdf_file: str,
-                       i: int | None = None,
-                       length: int | None = None) -> None:
+                     pdf_file: str,
+                     i: int | None = None,
+                     length: int | None = None) -> None:
         '''
             Process a single PDF file
 
@@ -330,7 +303,7 @@ class PdfManager:
                             barcodes = self.__get_prefixed_text_from_image(split_image_file)
                         self.__remove_file(split_image_file)
                         self.__copy_file_as(split_pdf_file,
-                                            os.path.join(self.output_dir,
+                                            os.path.join(self.config.destination,
                                                         f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(split_pdf_file))) # pylint: disable=line-too-long
                         self.__remove_file(split_pdf_file)
                 self.__remove_file_and_lock_file(pdf_file)
@@ -342,7 +315,7 @@ class PdfManager:
         '''
             Process the PDF files in the directory
         '''
-        self.log(f"Processing '{self.pdf_dir}'")
+        self.log(f"Processing '{self.config.source}'")
         files: list[str] = self.__files_in_dir()
         if not files:
             self.log("No files found")
@@ -392,7 +365,7 @@ class PdfManager:
 
             :param max_processes: :class:`Optional(int)` Max processes to run. Defaults to `4`
         '''
-        self.log(f"Processing '{self.pdf_dir}'")
+        self.log(f"Processing '{self.config.source}'")
         files: list[str] = self.__files_in_dir()
         if not files:
             self.log("No files found in")

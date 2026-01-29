@@ -31,7 +31,7 @@ def make_dir_return_path(path: str) -> str:
 LOG_DIR: str = "logs"
 
 # Document directory
-DOC_DIR: str = "docs"
+SOURCE_DIR: str = "source"
 
 # Temp directory
 TEMP_DIR: str = "temp"
@@ -40,7 +40,7 @@ TEMP_DIR: str = "temp"
 IMG_DIR: str = "images"
 
 # Output directory
-OUTPUT_DIR: str = "out"
+DESTINATION_DIR: str = "destination"
 
 # Backup directory
 BACKUP_DIR: str = "backup"
