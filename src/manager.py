@@ -87,8 +87,8 @@ class PdfManager:
             :param encoding: :class:`Optional(str)` Encoding of the file. Defaults to `"utf-8-sig`
         '''
         try:
-            with open(f"{file_path}.lock",
-                      "w",
+            with open(file = f"{file_path}.lock",
+                      mode = "w",
                       encoding = encoding) as lock_file:
                 lock_file.write("LOCKED")
             self.log(f"Lock file created for {file_path}")
@@ -143,11 +143,9 @@ class PdfManager:
 
             :param pdf_path: :class:`str` File path
         '''
-        splitter: PdfSplitter = PdfSplitter(pdf_path = pdf_path,
-                                            output_dir = self.config.temp,
-                                            logger = self.logger)
-        splitter.split()
-        return splitter.output_files
+        return PdfSplitter(pdf_path = pdf_path,
+                           output_dir = self.config.temp,
+                           logger = self.logger).split_and_get_files()
 
 
     def __convert_pdf_to_images(self,
@@ -157,11 +155,9 @@ class PdfManager:
 
             :param pdf_path: :class:`str` File path
         '''
-        pdf2img: Pdf2Img = Pdf2Img(pdf_path = pdf_path,
-                                   output_path = self.config.image,
-                                   logger = self.logger)
-        pdf2img.convert()
-        return pdf2img.image_path
+        return Pdf2Img(pdf_path = pdf_path,
+                       output_path = self.config.image,
+                       logger = self.logger).convert_and_get_file()
 
 
     def __check_barcode_on_image(self,
@@ -171,10 +167,8 @@ class PdfManager:
 
             :param image_path: :class:`str` File path
         '''
-        scanner: Scanner = Scanner(image_path = image_path,
-                                   logger = self.logger)
-        scanner.scan_for_barcodes()
-        return scanner.barcodes
+        return Scanner(image_path = image_path,
+                       logger = self.logger).get_barcodes()
 
 
     def __get_enum_for_ocr(self,
@@ -207,8 +201,8 @@ class PdfManager:
                                                                ratio = self.ratio),
                                           prefixes = self.ocr_prefixes,
                                           logger = self.logger)
-        barcodes: list[Barcode] = [Barcode(barcode_type = "ocr_reader",
-                                           barcode_data = self.__get_enum_for_ocr(text)) for text in ocr_reader.get_texts()] # pylint: disable=line-too-long
+        barcodes: list[Barcode] = [Barcode(type = "ocr_reader",
+                                           data = self.__get_enum_for_ocr(text)) for text in ocr_reader.get_texts()] # pylint: disable=line-too-long
         return barcodes
 
 
@@ -223,10 +217,10 @@ class PdfManager:
             :param new_file_path: :class:`str` New file path
         '''
         try:
-            with open(file_path,
-                      "rb") as file:
-                with open(new_file_path,
-                          "wb") as new_file:
+            with open(file = file_path,
+                      mode = "rb") as file:
+                with open(file = new_file_path,
+                          mode = "wb") as new_file:
                     new_file.write(file.read())
             self.log(f"Copied {file_path} to {new_file_path}")
         except Exception as error: #pylint: disable=broad-exception-caught
@@ -304,7 +298,7 @@ class PdfManager:
                         self.__remove_file(split_image_file)
                         self.__copy_file_as(split_pdf_file,
                                             os.path.join(self.config.destination,
-                                                        f"{barcodes[0].barcode_data}.pdf" if barcodes else os.path.basename(split_pdf_file))) # pylint: disable=line-too-long
+                                                        f"{barcodes[0].data}.pdf" if barcodes else os.path.basename(split_pdf_file))) # pylint: disable=line-too-long
                         self.__remove_file(split_pdf_file)
                 self.__remove_file_and_lock_file(pdf_file)
         except Exception as error: #pylint: disable=broad-exception-caught
@@ -373,7 +367,8 @@ class PdfManager:
         if not isinstance(max_processes, int):
             if isinstance(max_processes, float):
                 self.log("'max_processes' is float, rounding it")
-                max_processes = int(round(max_processes, 0))
+                max_processes = int(round(max_processes,
+                                          0))
             else:
                 raise PdfManagerException("'max_processes' should be an integer")
         if max_processes < 1:
@@ -386,7 +381,9 @@ class PdfManager:
         for i, pdf in enumerate(files):
             # creating a process for each pdf file
             process: Process = Process(target = self.process_file,
-                                       args = (pdf, i, len(files)))
+                                       args = (pdf,
+                                               i,
+                                               len(files)))
             # adding the process to the list
             processes.append(process)
             # starting the process

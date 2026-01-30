@@ -2,12 +2,12 @@
 
 from argparse import ArgumentParser, Namespace
 from multiprocessing import freeze_support
-from config import SOURCE_DIR, DESTINATION_DIR, TEMP_DIR, IMG_DIR, LOG_DIR
+from config import SOURCE_DIR, DESTINATION_DIR, TEMP_DIR, IMG_DIR, LOG_DIR, BACKUP_DIR
 from src.main import PathConfig, run as run_by_arg_run
 
 parser: ArgumentParser = ArgumentParser(
     prog = "PDF Splitter",
-    description = "Split PDF files into individual pages, by reading the barcode on each page"
+    description = "Split PDF files into individual pages and renames them by reading the barcode on each page"
 )
 
 arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF files"],
@@ -18,7 +18,7 @@ arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF fi
                              ["-i", "--image", str, "Temporary directory to store the images"],
                              ["-m", "--mode", str, "Mode of operation (single|multi), by default is single"], # pylint: disable=line-too-long
                              ["-p", "--processes", int, "Maximum number of processes to run, by default is the number of CPU threads"], # pylint: disable=line-too-long
-                             ["-f", "--prefixes", str, "Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ')"], # pylint: disable=line-too-long
+                             ["-f", "--prefixes", str, "Prefixes for OCR reading if barcode not found (ex.: 'KSZ,EKSZ'), if left empty then OCR won't run"], # pylint: disable=line-too-long
                              ["-r", "--ratio", float, "Image ratio to check for OCR, only neccessary if `--text-prefixes` is given (ex.: 0.4 means it scans from top to bottom 40%% of the image)"]] # pylint: disable=line-too-long
 
 for arg in arg_list:
@@ -37,7 +37,7 @@ def main() -> None:
                                          destination = args.destination or DESTINATION_DIR,
                                          temp = args.temp or TEMP_DIR,
                                          image = args.image or IMG_DIR,
-                                         backup = args.backup,
+                                         backup = args.backup or BACKUP_DIR,
                                          log = args.log or LOG_DIR)
     run_by_arg_run(path_config = path_config,
                    mode = args.mode,

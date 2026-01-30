@@ -53,3 +53,9 @@ class Pdf2Img:
             self.image_path.append(image_path)
             self.log(f"Converted {self.pdf_path} to {image_path}")
         return self.image_path
+
+    def convert_and_get_file(self) -> str:
+        '''
+            Convert file to image and get path
+        '''
+        return self.convert()

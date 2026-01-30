@@ -42,7 +42,7 @@ class PdfSplitter:
         self.logger.log(content)
 
 
-    def split(self):
+    def split(self) -> list[str]:
         '''
             Split the PDF file into individual pages
         '''
@@ -66,3 +66,11 @@ class PdfSplitter:
                     self.output_files.append(output_pdf_path)
         except Exception as error: # pylint: disable=broad-exception-caught
             self.log(f"Error splitting {base_name}: {error}")
+        return self.output_files
+
+
+    def split_and_get_files(self) -> list[str]:
+        '''
+            Split files and return their paths
+        '''
+        return self.split()

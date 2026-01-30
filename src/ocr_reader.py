@@ -71,7 +71,8 @@ class OcrReader:
             self.image_data.ratio = 1.0
 
         height, width = self.image.shape[:2]
-        self.image = self.image[:int(height * self.image_data.ratio), :width]
+        self.image = self.image[:int(height * self.image_data.ratio),
+                                :width]
 
 
     def __read_file_text(self) -> list[str]:

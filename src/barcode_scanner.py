@@ -15,8 +15,8 @@ class Barcode:
     ''' 
         Barcode class
     '''
-    barcode_type: str
-    barcode_data: str
+    type: str
+    data: str
 
 
 class Scanner:
@@ -52,6 +52,7 @@ class Scanner:
         self.barcodes: list[Barcode] = []
         self.enhance_count: int = self.ENHANCE_MIN
 
+
     def log(self,
             content: str) -> None:
         '''
@@ -75,6 +76,7 @@ class Scanner:
         '''
         self.log(content = f"Grayscaling '{self.image_path}'")
         self.image = grayscale(self.image)
+        self.__inc_enhance_cnt()
 
 
     def __sharpen_image(self) -> None:
@@ -83,6 +85,7 @@ class Scanner:
         '''
         self.log(content = f"Sharpening '{self.image_path}'")
         self.image = self.image.filter(SHARPEN)
+        self.__inc_enhance_cnt()
 
 
     def __contrast_image(self,
@@ -95,6 +98,7 @@ class Scanner:
         self.log(content = f"Contrasting '{self.image_path}'")
         enhancer: Contrast = Contrast(self.image)
         self.image = enhancer.enhance(contrast_ratio)
+        self.__inc_enhance_cnt()
 
 
     def __increase_image(self,
@@ -109,6 +113,8 @@ class Scanner:
         width, height = self.image.size
         self.image = self.image.resize((width * ratio_int,
                                         height * ratio_int))
+        self.__inc_enhance_cnt()
+
 
     def __enhance_image(self) -> None:
         '''
@@ -117,25 +123,22 @@ class Scanner:
         match self.enhance_count:
             case 0:
                 self.__grayscale_image()
-                self.__inc_enhance_cnt()
                 return None
             case 1:
                 self.__increase_image()
-                self.__inc_enhance_cnt()
                 return None
             case 2:
                 self.__contrast_image()
-                self.__inc_enhance_cnt()
                 return None
             case 3:
                 self.__sharpen_image()
-                self.__inc_enhance_cnt()
                 return None
             case _:
                 return None
         return None
 
-    def decode_pyz(self) -> list[Decoded]:
+
+    def __decode_pyz(self) -> list[Decoded]:
         '''
             Decodes barcodes from `Image` and tries to enhance if fails
         '''
@@ -148,27 +151,27 @@ class Scanner:
         return barcodes
 
 
-    def scan_for_barcodes(self) -> list[Barcode]:
+    def __scan_for_barcodes(self) -> list[Barcode]:
         '''
             Scan for barcodes
         '''
         try:
-            barcodes: list[Decoded] = self.decode_pyz()
+            barcodes: list[Decoded] = self.__decode_pyz()
             if barcodes:
-                for barcode in barcodes:
-                    barcode_type: str = barcode.type
-                    barcode_data: str = barcode.data.decode("utf-8")
-                    self.log(f"'{self.image_path}' Barcode found: {barcode_type} - {barcode_data}")
-                    self.barcodes.append(Barcode(barcode_type = barcode_type,
-                                                 barcode_data = barcode_data))
+                for code in barcodes:
+                    barcode: Barcode = Barcode(type = code.type,
+                                         data = code.data.decode("utf-8"))
+                    self.log(f"'{self.image_path}' Barcode found: {barcode.type} - {barcode.data}")
+                    self.barcodes.append(barcode)
             else:
                 self.log("No barcodes found")
         except Exception as error: #pylint: disable=broad-exception-caught
             self.log(f"Error scanning for barcodes: {error}")
         return self.barcodes
 
+
     def get_barcodes(self) -> list[Barcode]:
         '''
             Return barcodes
         '''
-        return self.barcodes
+        return self.__scan_for_barcodes()

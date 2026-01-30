@@ -24,7 +24,8 @@ def run(path_config: PathConfig | None = None,
         :param ratio: :class:`Optional(Union(float, None))` defaults to `None`
     ''' # pylint: disable=line-too-long
     path_config = path_config or PathConfig()
-    ocr_prefix_list: list[str] | None = None if not ocr_prefixes or not isinstance(ocr_prefixes, str) else ocr_prefixes.strip().replace(" ", "").split(",")
+    ocr_prefix_list: list[str] | None = None if not ocr_prefixes or not isinstance(ocr_prefixes,
+                                                                                   str) else ocr_prefixes.strip().replace(" ", "").split(",")
     pdf_manager: PdfManager = PdfManager(path_config = path_config,
                                          ocr_prefixes = ocr_prefix_list,
                                          ratio = ratio,

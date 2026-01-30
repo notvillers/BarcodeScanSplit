@@ -24,7 +24,8 @@ class PathConfig:
         for field in fields(self):
             f_path: str = getattr(self,
                                   field.name)
-            if isinstance(f_path, str):
+            if isinstance(f_path,
+                          str):
                 if not os.path.exists(f_path):
                     os.makedirs(f_path,
                                 exist_ok = True)

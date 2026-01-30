@@ -15,6 +15,7 @@ def make_dir(path: str) -> None:
     if not os.path.exists(path):
         os.mkdir(path)
 
+
 def make_dir_return_path(path: str) -> str:
     '''
         Create a directory if it does not exist and return the path
@@ -26,36 +27,39 @@ def make_dir_return_path(path: str) -> str:
     make_dir(dir_path)
     return dir_path
 
+
 # Directories
-# Log directory
 LOG_DIR: str = "logs"
+''' Directory for the log files '''
 
-# Document directory
 SOURCE_DIR: str = "source"
+''' Directory to the source files '''
 
-# Temp directory
 TEMP_DIR: str = "temp"
+''' Directory for the temp files '''
 
-# Image directory
 IMG_DIR: str = "images"
+''' Directory for the created `temp` images '''
 
-# Output directory
 DESTINATION_DIR: str = "destination"
+''' Directory for the output files '''
 
-# Backup directory
 BACKUP_DIR: str = "backup"
+''' Directory to backup files '''
 
-# Variables
 default_max_processes: int = os.cpu_count() or 1
+''' Allowed default max processes to run in `multiprocess`/`multi` mode '''
 
 SINGLE_PROCESS_COMMANDS: list[str] = ["singleproccess",
                                       "single",
                                       "s",
                                       "sp",
                                       "sync"]
+''' Synonym(s) for `singleprocess` command '''
 
 MULTI_PROCESS_COMMANDS: list[str] = ["multiproccess",
                                      "multi",
                                      "m",
                                      "mp",
                                      "async"]
+''' Synonym(s) for `multiprocess` command '''
