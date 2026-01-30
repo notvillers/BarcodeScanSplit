@@ -7,7 +7,7 @@ from src.main import PathConfig, run as run_by_arg_run
 
 parser: ArgumentParser = ArgumentParser(
     prog = "PDF Splitter",
-    description = "Split PDF files into individual pages and renames them by reading the barcode on each page"
+    description = "Split PDF files into individual pages and renames them by reading the barcode on each page" # pylint: disable=line-too-long
 )
 
 arg_list: list[list[any]] = [["-s","--source", str, "Directory containing PDF files"],
