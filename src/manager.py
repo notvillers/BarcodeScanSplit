@@ -292,7 +292,8 @@ class PdfManager:
                     self.log(f"{cnt + 1}/{len(split_files)}.: {pdf_file} -> {split_pdf_file}")
                     for split_image_file in self.__convert_pdf_to_images(split_pdf_file):
                         barcodes: list[Barcode] = self.__check_barcode_on_image(split_image_file)
-                        if not barcodes and self.ratio is not None and self.ocr_prefixes:
+                        # TODO: fix silent error on windows
+                        if not barcodes and self.ratio is not None and self.ocr_prefixes and False:
                             self.log(f"Trying to OCR read '{split_image_file}'")
                             barcodes = self.__get_prefixed_text_from_image(split_image_file)
                         self.__remove_file(split_image_file)
